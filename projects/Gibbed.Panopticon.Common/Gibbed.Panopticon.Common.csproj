@@ -1,0 +1,19 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <Company>Gibbed</Company>
+    <Authors>Gibbed</Authors>
+    <Description>https://gib.me/</Description>
+    <Copyright>Copyright © Gibbed 2025</Copyright>
+  </PropertyGroup>
+  <PropertyGroup>
+    <TargetFramework>net48</TargetFramework>
+    <LangVersion>9.0</LangVersion>
+  </PropertyGroup>
+  <ItemGroup>
+    <PackageReference Include="CommunityToolkit.HighPerformance" Version="8.4.0" />
+    <PackageReference Include="System.Memory" Version="4.6.0" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Gibbed.Memory\Gibbed.Memory.csproj" />
+  </ItemGroup>
+</Project>
