@@ -144,7 +144,6 @@ namespace Gibbed.Panopticon.Unpack
         private static void Unpack(Stream input, Entry entry, Endian endian, Stream output)
         {
             input.Position = entry.DataOffset;
-
             var headSize = (int)Math.Min(entry.DataSize, 16);
             var headBytes = input.ReadBytes(headSize);
             ReadOnlySpan<byte> headSpan = new(headBytes);
@@ -166,7 +165,8 @@ namespace Gibbed.Panopticon.Unpack
                 return;
             }
 
-            throw new InvalidOperationException("unsupported compression scheme");
+            input.Position = entry.DataOffset;
+            input.CopyTo(entry.DataSize, output);
         }
 
         private static void UnpackZlib(Stream input, Entry entry, ReadOnlySpan<byte> headSpan, Endian endian, Stream output)
@@ -193,6 +193,8 @@ namespace Gibbed.Panopticon.Unpack
             int index = 0;
             var hash = tailSpan.ReadValueU32(ref index, endian);
             var uncompressedSize = tailSpan.ReadValueU32(ref index, endian);
+
+            input.Position = entry.DataOffset;
 
             throw new NotImplementedException();
         }

@@ -30,9 +30,9 @@ using Gibbed.Memory;
 using Gibbed.Panopticon.Common;
 using Gibbed.Panopticon.FileFormats;
 using Gibbed.Panopticon.FileFormats.Archives;
-using ICSharpCode.SharpZipLib.Zip.Compression;
-using ICSharpCode.SharpZipLib.Zip.Compression.Streams;
 using NDesk.Options;
+using Deflater = ICSharpCode.SharpZipLib.Zip.Compression.Deflater;
+using DeflaterOutputStream = ICSharpCode.SharpZipLib.Zip.Compression.Streams.DeflaterOutputStream;
 using Endian = Gibbed.Memory.Endian;
 using FileEndian = Gibbed.IO.Endian;
 
@@ -42,12 +42,14 @@ namespace Gibbed.Panopticon.Pack
     {
         private static void Main(string[] args)
         {
+            bool compress = true;
             int? compressionLevel = null;
             bool verbose = false;
             bool showHelp = false;
 
             OptionSet options = new()
             {
+                { "nc|no-compress", "do not compress files", v => compress = v == null },
                 { "c|compression-level=", "set compression level (0-9), default 9", v => compressionLevel = int.Parse(v) },
                 { "v|verbose", "be verbose", v => verbose = v != null },
                 { "h|help", "show this message and exit", v => showHelp = v != null },
@@ -70,6 +72,7 @@ namespace Gibbed.Panopticon.Pack
             if (extras.Count < 1 || showHelp == true)
             {
                 Console.WriteLine("Usage: {0} [OPTIONS]+ output_eaf input_directory+", ProjectHelpers.GetExecutableName());
+                Console.WriteLine("       {0} [OPTIONS]+ input_directory", ProjectHelpers.GetExecutableName());
                 Console.WriteLine();
                 Console.WriteLine("Options:");
                 options.WriteOptionDescriptions(Console.Out);
@@ -174,6 +177,7 @@ namespace Gibbed.Panopticon.Pack
                             name,
                             input, input.Length,
                             output,
+                            compress,
                             compressionLevel ?? Deflater.BEST_COMPRESSION,
                             fileEndian);
                     }
@@ -196,32 +200,46 @@ namespace Gibbed.Panopticon.Pack
 
         private static Entry Pack(
             string name,
-            Stream input, long length,
-            Stream output, int compressionLevel, FileEndian endian)
+            Stream input, long inputSize,
+            Stream output, bool compress, int compressionLevel, FileEndian endian)
         {
-            var compressedBytes = CompressZlib(input, length, compressionLevel, out var hash);
-            long dataOffset = output.Position;
-            uint dataSizeCompressed = (uint)compressedBytes.Length;
+            long dataOffset;
+            uint dataSize;
 
-            output.WriteValueU32(0x5A4D4523u, endian); // '#EMZ'
-            output.WriteValueU32(hash, endian);
-            output.WriteValueU32((uint)length, endian);
-            output.WriteValueU32(16, endian);
-            output.Write(compressedBytes, 0, compressedBytes.Length);
+            if (compress == true)
+            {
+                var compressedBytes = CompressZlib(input, inputSize, compressionLevel, out var hash);
+
+                dataOffset = output.Position;
+                dataSize = 16 + (uint)compressedBytes.Length;
+
+                output.WriteValueU32(0x5A4D4523u, endian); // '#EMZ'
+                output.WriteValueU32(hash, endian);
+                output.WriteValueU32((uint)inputSize, endian);
+                output.WriteValueU32(16, endian);
+                output.Write(compressedBytes, 0, compressedBytes.Length);
+            }
+            else
+            {
+                dataOffset = output.Position;
+                dataSize = (uint)inputSize;
+
+                input.CopyTo(dataSize, output);
+            }
 
             Entry entry;
             entry.Path = name;
             entry.DataOffset = dataOffset;
-            entry.DataSize = 16 + dataSizeCompressed;
+            entry.DataSize = dataSize;
             return entry;
         }
 
-        private static byte[] CompressZlib(Stream input, long length, int level, out uint hash)
+        private static byte[] CompressZlib(Stream input, long size, int level, out uint hash)
         {
             using MemoryStream data = new();
             using DeflaterOutputStream zlib = new(data, new(level, true));
             zlib.IsStreamOwner = false;
-            input.CopyTo(length, 0u, zlib, out hash);
+            input.CopyTo(size, 0u, zlib, out hash);
             zlib.Finish();
             zlib.Flush();
             data.Flush();
