@@ -94,18 +94,15 @@ namespace Gibbed.Panopticon.ImportMessages
 
             foreach (var (inputPath, outputPath) in targets.OrderBy(t => t.inputPath))
             {
-                Tommy.TomlTable rootTable;
-                var inputBytes = File.ReadAllBytes(inputPath);
-                using (var input = new MemoryStream(inputBytes, false))
-                using (var reader = new StreamReader(input, true))
-                {
-                    rootTable = Tommy.TOML.Parse(reader);
-                }
-
-                if (Import(rootTable, out var messageFile) == false)
+                if (ParseFile(inputPath, out var errors, out var rootTable) == false ||
+                    Import(rootTable, out errors, out var messageFile) == false)
                 {
                     Console.WriteLine($"Failed to import '{inputPath}'!");
-                    return;
+                    foreach (var error in errors)
+                    {
+                        Console.WriteLine($"  {error}");
+                    }
+                    continue;
                 }
 
                 PooledArrayBufferWriter<byte> writer = new();
@@ -116,18 +113,44 @@ namespace Gibbed.Panopticon.ImportMessages
             }
         }
 
-        private static bool Import(Tommy.TomlTable table, out LanguageMessageFile messageFile)
+        private static bool ParseFile(string path, out List<string> errors, out Tommy.TomlTable table)
+        {
+            var bytes = File.ReadAllBytes(path);
+            using (var input = new MemoryStream(bytes, false))
+            using (var reader = new StreamReader(input, true))
+            {
+                try
+                {
+                    errors = default;
+                    table = Tommy.TOML.Parse(reader);
+                    return true;
+                }
+                catch (Tommy.TomlParseException ex)
+                {
+                    errors = new();
+                    foreach (Tommy.TomlSyntaxException syntaxEx in ex.SyntaxErrors)
+                    {
+                        errors.Add($"({syntaxEx.Line},{syntaxEx.Column}): {syntaxEx.Message}");
+                    }
+                    table = default;
+                    return false;
+                }
+            }
+        }
+
+        private static bool Import(Tommy.TomlTable table, out List<string> errors, out LanguageMessageFile messageFile)
         {
             Tommy.TomlArray messageArray = new()
             {
                 IsTableArray = true,
             };
 
+            errors = new();
             messageFile = new();
 
             if (ImportEnum(table, "endian", Endian.Little, out var endian) == false)
             {
-                Console.WriteLine($"Invalid endian '{endian}' specified.");
+                errors.Add($"Invalid endian '{endian}' specified.");
                 return false;
             }
 
@@ -165,13 +188,11 @@ namespace Gibbed.Panopticon.ImportMessages
         {
             if (table[key] is not Tommy.TomlString str)
             {
-                Console.WriteLine($"No {nameof(TEnum)} specified for '{key}'.");
                 value = default;
                 return false;
             }
             if (Enum.TryParse(str, out value) == false)
             {
-                Console.WriteLine($"Invalid {nameof(TEnum)} value '{str.Value}' specified for '{key}'.");
                 value = default;
                 return false;
             }
@@ -188,7 +209,6 @@ namespace Gibbed.Panopticon.ImportMessages
             }
             if (Enum.TryParse(str, out value) == false)
             {
-                Console.WriteLine($"Invalid {nameof(TEnum)} value '{str.Value}' specified for '{key}'.");
                 value = default;
                 return false;
             }
