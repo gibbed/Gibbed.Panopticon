@@ -20,31 +20,20 @@
  *    distribution.
  */
 
-using System;
-using System.Buffers;
-
-namespace Gibbed.Panopticon.Common
+namespace Gibbed.Panopticon.FileFormats.ItemSpecs
 {
-    public static class PaddingHelpers
+    public enum ItemType : ushort
     {
-        public static void SkipPadding(this IBufferWriter<byte> writer, int size)
-        {
-            var span = writer.GetSpan(size);
-            span.Slice(0, size).Clear();
-            writer.Advance(size);
-        }
-
-        public static void SkipPadding(this ReadOnlySpan<byte> span, ref int index, int size)
-        {
-            span = span.Slice(index, size);
-            index += size;
-            foreach (var b in span)
-            {
-                if (b != 0)
-                {
-                    throw new FormatException("non-zero padding (uninitialized memory?)");
-                }
-            }
-        }
+        Weapon = 0, // MWP
+        SubWeapon = 1, // SWP  combat item
+        ResourceField = 2, // RES
+        Booster = 3, // BST  augmentation
+        Key = 4, // KEY
+        Citizen = 5, // CIT
+        ResourceSouvenir = 6, // SWS  cut content
+        ResourceGeneralL = 7, // RES
+        ResourceOnHigh = 8, // RES
+        ResourceGeneralS = 9, // RES
+        Modular = 10, // EFF  Module
     }
 }

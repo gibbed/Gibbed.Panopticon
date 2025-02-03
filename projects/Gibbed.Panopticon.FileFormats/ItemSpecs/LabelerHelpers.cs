@@ -20,31 +20,28 @@
  *    distribution.
  */
 
-using System;
-using System.Buffers;
+using Gibbed.Buffers;
 
-namespace Gibbed.Panopticon.Common
+namespace Gibbed.Panopticon.FileFormats.ItemSpecs
 {
-    public static class PaddingHelpers
+    internal static class LabelerHelpers
     {
-        public static void SkipPadding(this IBufferWriter<byte> writer, int size)
+        public static ILabel WritePointer(this IArrayBufferWriter<byte> writer, ILabeler labeler)
         {
-            var span = writer.GetSpan(size);
-            span.Slice(0, size).Clear();
-            writer.Advance(size);
+            return labeler.WritePointer(writer);
         }
 
-        public static void SkipPadding(this ReadOnlySpan<byte> span, ref int index, int size)
+        public static void WriteStringRef(this IArrayBufferWriter<byte> writer, string value, ILabeler labeler)
         {
-            span = span.Slice(index, size);
-            index += size;
-            foreach (var b in span)
-            {
-                if (b != 0)
-                {
-                    throw new FormatException("non-zero padding (uninitialized memory?)");
-                }
-            }
+            labeler.WriteStringRef(writer, value);
+        }
+
+        public static void WriteStringRef(
+            this IArrayBufferWriter<byte> writer,
+            string value,
+            ILabeler labeler, StringPool pool)
+        {
+            labeler.WriteStringRef(writer, value, pool);
         }
     }
 }

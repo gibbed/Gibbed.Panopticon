@@ -20,31 +20,19 @@
  *    distribution.
  */
 
-using System;
-using System.Buffers;
+using Newtonsoft.Json;
 
-namespace Gibbed.Panopticon.Common
+namespace Gibbed.Panopticon.FileFormats.ItemSpecs
 {
-    public static class PaddingHelpers
+    public struct DropItem
     {
-        public static void SkipPadding(this IBufferWriter<byte> writer, int size)
-        {
-            var span = writer.GetSpan(size);
-            span.Slice(0, size).Clear();
-            writer.Advance(size);
-        }
+        [JsonProperty("item_id")]
+        public string ItemId;
 
-        public static void SkipPadding(this ReadOnlySpan<byte> span, ref int index, int size)
-        {
-            span = span.Slice(index, size);
-            index += size;
-            foreach (var b in span)
-            {
-                if (b != 0)
-                {
-                    throw new FormatException("non-zero padding (uninitialized memory?)");
-                }
-            }
-        }
+        [JsonProperty("quantity")]
+        public ushort Quantity;
+
+        [JsonProperty("weight")]
+        public ushort Weight;
     }
 }

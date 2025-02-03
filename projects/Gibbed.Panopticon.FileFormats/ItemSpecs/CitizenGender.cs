@@ -20,31 +20,12 @@
  *    distribution.
  */
 
-using System;
-using System.Buffers;
-
-namespace Gibbed.Panopticon.Common
+namespace Gibbed.Panopticon.FileFormats.ItemSpecs
 {
-    public static class PaddingHelpers
+    public enum CitizenGender : uint
     {
-        public static void SkipPadding(this IBufferWriter<byte> writer, int size)
-        {
-            var span = writer.GetSpan(size);
-            span.Slice(0, size).Clear();
-            writer.Advance(size);
-        }
-
-        public static void SkipPadding(this ReadOnlySpan<byte> span, ref int index, int size)
-        {
-            span = span.Slice(index, size);
-            index += size;
-            foreach (var b in span)
-            {
-                if (b != 0)
-                {
-                    throw new FormatException("non-zero padding (uninitialized memory?)");
-                }
-            }
-        }
+        Unknown = 0,
+        Male = 1,
+        Female = 2,
     }
 }

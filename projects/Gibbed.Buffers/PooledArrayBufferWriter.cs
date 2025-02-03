@@ -5,7 +5,7 @@ using System.Buffers;
 
 namespace Gibbed.Buffers
 {
-    public sealed class PooledArrayBufferWriter<T> : IBufferWriter<T>
+    public sealed class PooledArrayBufferWriter<T> : IArrayBufferWriter<T>
     {
         private const int DefaultInitialBufferSize = 4096 * 2;
 

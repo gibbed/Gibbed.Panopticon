@@ -21,30 +21,42 @@
  */
 
 using System;
-using System.Buffers;
+using Gibbed.Buffers;
+using Gibbed.Memory;
 
-namespace Gibbed.Panopticon.Common
+namespace Gibbed.Panopticon.FileFormats.ItemSpecs
 {
-    public static class PaddingHelpers
+    internal class TableHeader
     {
-        public static void SkipPadding(this IBufferWriter<byte> writer, int size)
+        internal const int Size = 8;
+
+        public int Count;
+        public int Offset;
+
+        public ILabel CountLabel;
+        public ILabel OffsetLabel;
+
+        internal void Read(ReadOnlySpan<byte> span, ref int index, Endian endian)
         {
-            var span = writer.GetSpan(size);
-            span.Slice(0, size).Clear();
-            writer.Advance(size);
+            if (span.Length < Size)
+            {
+                throw new ArgumentOutOfRangeException(nameof(span), "span is too small");
+            }
+
+            this.Count = span.ReadValueS32(ref index, endian);
+            this.Offset = span.ReadValueS32(ref index, endian);
         }
 
-        public static void SkipPadding(this ReadOnlySpan<byte> span, ref int index, int size)
+        internal void Write(IArrayBufferWriter<byte> writer, ILabeler labeler, Endian endian)
         {
-            span = span.Slice(index, size);
-            index += size;
-            foreach (var b in span)
-            {
-                if (b != 0)
-                {
-                    throw new FormatException("non-zero padding (uninitialized memory?)");
-                }
-            }
+            this.CountLabel = writer.WritePointer(labeler);
+            this.OffsetLabel = writer.WritePointer(labeler);
+        }
+
+        internal void Set(int count, int offset)
+        {
+            this.CountLabel.Set(count);
+            this.OffsetLabel.Set(offset);
         }
     }
 }

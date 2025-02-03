@@ -33,6 +33,11 @@ namespace Gibbed.Panopticon.Common
         private int _WriteIndex;
         private int _TotalWriteIndex;
 
+        public SimpleBufferWriter(T[] buffer)
+            : this(buffer, 0, buffer.Length)
+        {
+        }
+
         public SimpleBufferWriter(T[] buffer, int offset, int count)
         {
             this._Buffer = buffer ?? throw new ArgumentNullException(nameof(buffer));
@@ -43,7 +48,13 @@ namespace Gibbed.Panopticon.Common
 
         public ReadOnlyMemory<T> WrittenMemory => this._Buffer.AsMemory(this._Offset, this._TotalWriteIndex);
         public ReadOnlySpan<T> WrittenSpan => this._Buffer.AsSpan(this._Offset, this._TotalWriteIndex);
-        public int WrittenCount => this._TotalWriteIndex;
+
+        public int WrittenCount
+        {
+            get => this._TotalWriteIndex;
+            set => this._TotalWriteIndex = value;
+        }
+
         public int Capacity => this._Count;
         public int FreeCapacity => this._Count - this._TotalWriteIndex;
 

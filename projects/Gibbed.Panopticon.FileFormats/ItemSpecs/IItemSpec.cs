@@ -21,30 +21,16 @@
  */
 
 using System;
-using System.Buffers;
+using Gibbed.Buffers;
+using Gibbed.Memory;
 
-namespace Gibbed.Panopticon.Common
+namespace Gibbed.Panopticon.FileFormats.ItemSpecs
 {
-    public static class PaddingHelpers
+    internal interface IItemSpec
     {
-        public static void SkipPadding(this IBufferWriter<byte> writer, int size)
-        {
-            var span = writer.GetSpan(size);
-            span.Slice(0, size).Clear();
-            writer.Advance(size);
-        }
-
-        public static void SkipPadding(this ReadOnlySpan<byte> span, ref int index, int size)
-        {
-            span = span.Slice(index, size);
-            index += size;
-            foreach (var b in span)
-            {
-                if (b != 0)
-                {
-                    throw new FormatException("non-zero padding (uninitialized memory?)");
-                }
-            }
-        }
+        void Load(ReadOnlySpan<byte> span, ref int index, Endian endian);
+        void PostLoad(ReadOnlySpan<byte> span, Endian endian);
+        void Save(IArrayBufferWriter<byte> writer, ILabeler labeler, Endian endian);
+        void PostSave(IArrayBufferWriter<byte> writer, ILabeler labeler, Endian endian);
     }
 }
