@@ -33,11 +33,11 @@ namespace Gibbed.Panopticon.FileFormats.ItemSpecs
         internal const int Size = 32;
         internal const int PaddingSize = 12;
 
-        private int _Unknown00Offset;
+        private int _WeaponIdOffset;
         private int _Unknown10Offset;
 
-        [JsonProperty("unknown00")]
-        public string Unknown00 { get; set; }
+        [JsonProperty("weapon_id")]
+        public string WeaponId { get; set; }
 
         [JsonProperty("unknown04")]
         public uint Unknown04 { get; set; }
@@ -61,7 +61,7 @@ namespace Gibbed.Panopticon.FileFormats.ItemSpecs
                 throw new ArgumentOutOfRangeException(nameof(span), "span is too small");
             }
 
-            this._Unknown00Offset = span.ReadValueS32(ref index, endian);
+            this._WeaponIdOffset = span.ReadValueS32(ref index, endian);
             this.Unknown04 = span.ReadValueU32(ref index, endian);
             this.Unknown08 = span.ReadValueU16(ref index, endian);
             this.Unknown0A = span.ReadValueU16(ref index, endian);
@@ -73,13 +73,13 @@ namespace Gibbed.Panopticon.FileFormats.ItemSpecs
 
         void IItemSpec.PostLoad(ReadOnlySpan<byte> span, Endian endian)
         {
-            this.Unknown00 = Helpers.ReadString(span, this._Unknown00Offset);
+            this.WeaponId = Helpers.ReadString(span, this._WeaponIdOffset);
             this.Unknown10 = Helpers.ReadString(span, this._Unknown10Offset);
         }
 
         void IItemSpec.Save(IArrayBufferWriter<byte> writer, ILabeler labeler, Endian endian)
         {
-            writer.WriteStringRef(this.Unknown00, labeler);
+            writer.WriteStringRef(this.WeaponId, labeler);
             writer.WriteValueU32(this.Unknown04, endian);
             writer.WriteValueU16(this.Unknown08, endian);
             writer.WriteValueU16(this.Unknown0A, endian);
