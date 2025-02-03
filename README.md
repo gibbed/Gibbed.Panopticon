@@ -24,8 +24,8 @@ Tools for modding **Freedom Wars Remastered**.
 
 ## Item Spec
 
-* [`ExportItemSpec`](projects/Gibbed.Panopticon.ExportItemSpec): Exporter for the item spec file (`master/cmn.eaf/spec/item_spec.ispec`).
-* [`ImportItemSpec`](projects/Gibbed.Panopticon.ImportItemSpec): Importer for the item spec file (`master/cmn.eaf/spec/item_spec.ispec`).
+* [`ExportItemSpec`](projects/Gibbed.Panopticon.ExportItemSpec): Exporter for the item spec file (`master/cmn.eaf/spec/item_spec.ispec`) to `.json`.
+* [`ImportItemSpec`](projects/Gibbed.Panopticon.ImportItemSpec): Importer for the item spec file (`master/cmn.eaf/spec/item_spec.ispec`) from `.json`.
 
 # TODO
 
