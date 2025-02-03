@@ -24,7 +24,7 @@ namespace Gibbed.Panopticon.FileFormats.ItemSpecs
 {
     public enum ItemType : ushort
     {
-        Weapon = 0, // MWP
+        MainWeapon = 0, // MWP
         SubWeapon = 1, // SWP  combat item
         ResourceField = 2, // RES
         Booster = 3, // BST  augmentation
