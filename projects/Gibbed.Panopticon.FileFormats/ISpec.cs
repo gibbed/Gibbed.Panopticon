@@ -20,14 +20,19 @@
  *    distribution.
  */
 
+using System;
 using Gibbed.Buffers;
+using Gibbed.Memory;
 
-namespace Gibbed.Panopticon.FileFormats.ItemSpecs
+namespace Gibbed.Panopticon.FileFormats
 {
-    internal interface ILabeler
+    internal interface ISpec<TStringPool, TLabeler>
+        where TStringPool : Enum
+        where TLabeler : ILabeler<TStringPool>
     {
-        ILabel WritePointer(IArrayBufferWriter<byte> writer);
-        void WriteStringRef(IArrayBufferWriter<byte> writer, string value);
-        void WriteStringRef(IArrayBufferWriter<byte> writer, string value, StringPool pool);
+        void Load(ReadOnlySpan<byte> span, ref int index, Endian endian);
+        void PostLoad(ReadOnlySpan<byte> span, Endian endian);
+        void Save(IArrayBufferWriter<byte> writer, TLabeler labeler, Endian endian);
+        void PostSave(IArrayBufferWriter<byte> writer, TLabeler labeler, Endian endian);
     }
 }

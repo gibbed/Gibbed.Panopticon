@@ -26,6 +26,8 @@ using Gibbed.Memory;
 
 namespace Gibbed.Panopticon.FileFormats.ItemSpecs
 {
+    using IItemLabeler = ILabeler<StringPool>;
+
     internal class TableHeader
     {
         internal const int Size = 8;
@@ -47,7 +49,7 @@ namespace Gibbed.Panopticon.FileFormats.ItemSpecs
             this.Offset = span.ReadValueS32(ref index, endian);
         }
 
-        internal void Write(IArrayBufferWriter<byte> writer, ILabeler labeler, Endian endian)
+        internal void Write(IArrayBufferWriter<byte> writer, IItemLabeler labeler, Endian endian)
         {
             this.CountLabel = writer.WritePointer(labeler);
             this.OffsetLabel = writer.WritePointer(labeler);

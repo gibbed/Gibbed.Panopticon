@@ -27,6 +27,8 @@ using Gibbed.Panopticon.Common;
 
 namespace Gibbed.Panopticon.FileFormats.ItemSpecs
 {
+    using IItemLabeler = ILabeler<StringPool>;
+
     internal class FileHeader
     {
         public const int Size = 224;
@@ -132,7 +134,7 @@ namespace Gibbed.Panopticon.FileFormats.ItemSpecs
             return instance;
         }
 
-        internal static void Write(FileHeader instance, IArrayBufferWriter<byte> writer, ILabeler labeler)
+        internal static void Write(FileHeader instance, IArrayBufferWriter<byte> writer, IItemLabeler labeler)
         {
             var endian = instance.Endian;
             writer.WriteValueU32(Signature, endian);
@@ -167,7 +169,7 @@ namespace Gibbed.Panopticon.FileFormats.ItemSpecs
             instance.UnknownD8s.Write(writer, labeler, endian);
         }
 
-        internal void Write(IArrayBufferWriter<byte> writer, ILabeler labeler)
+        internal void Write(IArrayBufferWriter<byte> writer, IItemLabeler labeler)
         {
             Write(this, writer, labeler);
         }

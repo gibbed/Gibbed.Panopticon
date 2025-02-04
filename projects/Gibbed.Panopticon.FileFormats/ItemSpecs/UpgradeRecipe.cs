@@ -28,6 +28,9 @@ using Newtonsoft.Json;
 
 namespace Gibbed.Panopticon.FileFormats.ItemSpecs
 {
+    using IItemSpec = ISpec<StringPool, ILabeler<StringPool>>;
+    using IItemLabeler = ILabeler<StringPool>;
+
     public class UpgradeRecipe : IItemSpec
     {
         internal const int Size = 48;
@@ -121,7 +124,7 @@ namespace Gibbed.Panopticon.FileFormats.ItemSpecs
             }
         }
 
-        void IItemSpec.Save(IArrayBufferWriter<byte> writer, ILabeler labeler, Endian endian)
+        void IItemSpec.Save(IArrayBufferWriter<byte> writer, IItemLabeler labeler, Endian endian)
         {
             writer.WriteStringRef(this.OutputItemId, labeler);
             writer.WriteStringRef(this.InputItemId, labeler);
@@ -140,7 +143,7 @@ namespace Gibbed.Panopticon.FileFormats.ItemSpecs
             writer.SkipPadding(PaddingSize);
         }
 
-        void IItemSpec.PostSave(IArrayBufferWriter<byte> writer, ILabeler labeler, Endian endian)
+        void IItemSpec.PostSave(IArrayBufferWriter<byte> writer, IItemLabeler labeler, Endian endian)
         {
         }
     }

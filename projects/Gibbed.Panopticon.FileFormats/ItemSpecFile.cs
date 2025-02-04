@@ -29,6 +29,8 @@ using Newtonsoft.Json.Converters;
 
 namespace Gibbed.Panopticon.FileFormats
 {
+    using IItemLabeler = ILabeler<StringPool>;
+
     public class ItemSpecFile
     {
         public const int WeaponTypeCount = FileHeader.WeaponTypeCount;
@@ -157,7 +159,7 @@ namespace Gibbed.Panopticon.FileFormats
             return instance;
         }
 
-        private void Save(IArrayBufferWriter<byte> writer, ILabeler labeler)
+        private void Save(IArrayBufferWriter<byte> writer, IItemLabeler labeler)
         {
             FileHeader header = new();
             var endian = header.Endian = this.Endian;

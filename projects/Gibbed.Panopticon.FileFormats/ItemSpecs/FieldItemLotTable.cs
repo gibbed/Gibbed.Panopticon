@@ -27,6 +27,9 @@ using Newtonsoft.Json;
 
 namespace Gibbed.Panopticon.FileFormats.ItemSpecs
 {
+    using IItemSpec = ISpec<StringPool, ILabeler<StringPool>>;
+    using IItemLabeler = ILabeler<StringPool>;
+
     public class FieldItemLotTable : IItemSpec
     {
         internal const int Size = 16;
@@ -66,14 +69,14 @@ namespace Gibbed.Panopticon.FileFormats.ItemSpecs
             this.Lots = this._Lots.LoadTable(span, endian);
         }
 
-        void IItemSpec.Save(IArrayBufferWriter<byte> writer, ILabeler labeler, Endian endian)
+        void IItemSpec.Save(IArrayBufferWriter<byte> writer, IItemLabeler labeler, Endian endian)
         {
             writer.WriteStringRef(this.FieldId, labeler);
             writer.WriteValueU32(this.Unknown04, endian);
             this._Lots.Write(writer, labeler, endian);
         }
 
-        void IItemSpec.PostSave(IArrayBufferWriter<byte> writer, ILabeler labeler, Endian endian)
+        void IItemSpec.PostSave(IArrayBufferWriter<byte> writer, IItemLabeler labeler, Endian endian)
         {
             this._Lots.SaveTable(this.Lots, writer, labeler, endian);
         }

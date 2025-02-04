@@ -20,20 +20,10 @@
  *    distribution.
  */
 
-using Gibbed.Buffers;
-
-namespace Gibbed.Panopticon.FileFormats.ItemSpecs
+namespace Gibbed.Panopticon.FileFormats
 {
-    using IItemLabeler = ILabeler<StringPool>;
-
-    internal static class LabelerHelpers
+    internal interface ILabel
     {
-        public static void WriteStringRef(
-            this IArrayBufferWriter<byte> writer,
-            string value,
-            IItemLabeler labeler, StringPool pool)
-        {
-            labeler.WriteStringRef(writer, value, pool);
-        }
+        void Set(int value);
     }
 }

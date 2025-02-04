@@ -28,6 +28,9 @@ using Newtonsoft.Json;
 
 namespace Gibbed.Panopticon.FileFormats.ItemSpecs
 {
+    using IItemSpec = ISpec<StringPool, ILabeler<StringPool>>;
+    using IItemLabeler = ILabeler<StringPool>;
+
     public class Unknown98 : IItemSpec
     {
         internal const int Size = 16;
@@ -63,14 +66,14 @@ namespace Gibbed.Panopticon.FileFormats.ItemSpecs
             this.Unknown04 = this._Unknown04.LoadTable(span, endian);
         }
 
-        void IItemSpec.Save(IArrayBufferWriter<byte> writer, ILabeler labeler, Endian endian)
+        void IItemSpec.Save(IArrayBufferWriter<byte> writer, IItemLabeler labeler, Endian endian)
         {
             writer.WriteValueU32(this.Unknown00, endian);
             this._Unknown04.Write(writer, labeler, endian);
             writer.SkipPadding(PaddingSize);
         }
 
-        void IItemSpec.PostSave(IArrayBufferWriter<byte> writer, ILabeler labeler, Endian endian)
+        void IItemSpec.PostSave(IArrayBufferWriter<byte> writer, IItemLabeler labeler, Endian endian)
         {
             this._Unknown04.SaveTable(this.Unknown04, writer, labeler, endian);
         }

@@ -29,6 +29,9 @@ using Newtonsoft.Json.Converters;
 
 namespace Gibbed.Panopticon.FileFormats.ItemSpecs
 {
+    using IItemSpec = ISpec<StringPool, ILabeler<StringPool>>;
+    using IItemLabeler = ILabeler<StringPool>;
+
     public class CitizenFirstName : IItemSpec
     {
         internal const int Size = 16;
@@ -60,14 +63,14 @@ namespace Gibbed.Panopticon.FileFormats.ItemSpecs
             this.FirstName = Helpers.ReadString(span, this._FirstNameOffset);
         }
 
-        void IItemSpec.Save(IArrayBufferWriter<byte> writer, ILabeler labeler, Endian endian)
+        void IItemSpec.Save(IArrayBufferWriter<byte> writer, IItemLabeler labeler, Endian endian)
         {
             writer.WriteStringRef(this.FirstName, labeler, StringPool.FirstName);
             writer.WriteValueU32((uint)this.Gender, endian);
             writer.SkipPadding(PaddingSize);
         }
 
-        void IItemSpec.PostSave(IArrayBufferWriter<byte> writer, ILabeler labeler, Endian endian)
+        void IItemSpec.PostSave(IArrayBufferWriter<byte> writer, IItemLabeler labeler, Endian endian)
         {
         }
 

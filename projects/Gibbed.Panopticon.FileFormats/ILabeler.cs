@@ -22,15 +22,18 @@
 
 using System;
 using Gibbed.Buffers;
-using Gibbed.Memory;
 
-namespace Gibbed.Panopticon.FileFormats.ItemSpecs
+namespace Gibbed.Panopticon.FileFormats
 {
-    internal interface IItemSpec
+    internal interface ILabeler
     {
-        void Load(ReadOnlySpan<byte> span, ref int index, Endian endian);
-        void PostLoad(ReadOnlySpan<byte> span, Endian endian);
-        void Save(IArrayBufferWriter<byte> writer, ILabeler labeler, Endian endian);
-        void PostSave(IArrayBufferWriter<byte> writer, ILabeler labeler, Endian endian);
+        ILabel WritePointer(IArrayBufferWriter<byte> writer);
+        void WriteStringRef(IArrayBufferWriter<byte> writer, string value);
+    }
+
+    internal interface ILabeler<TStringPool> : ILabeler
+        where TStringPool : Enum
+    {
+        void WriteStringRef(IArrayBufferWriter<byte> writer, string value, TStringPool pool);
     }
 }
