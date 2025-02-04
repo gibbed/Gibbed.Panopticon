@@ -27,11 +27,11 @@ using Gibbed.Memory;
 
 namespace Gibbed.Panopticon.FileFormats.ItemSpecs
 {
-    using IItemSpec = ISpec<StringPool, ILabeler<StringPool>>;
-    using IItemLabeler = ILabeler<StringPool>;
+    using ISpec = ISpec<StringPool, ILabeler<StringPool>>;
+    using ILabeler = ILabeler<StringPool>;
 
     internal class TableInfo<T>
-        where T : IItemSpec, new()
+        where T : ISpec, new()
     {
         public readonly TableHeader Header;
 
@@ -50,7 +50,7 @@ namespace Gibbed.Panopticon.FileFormats.ItemSpecs
             this.Header.Read(span, ref index, endian);
         }
 
-        internal void Write(IArrayBufferWriter<byte> writer, IItemLabeler labeler, Endian endian)
+        internal void Write(IArrayBufferWriter<byte> writer, ILabeler labeler, Endian endian)
         {
             this.Header.Write(writer, labeler, endian);
         }
@@ -63,31 +63,31 @@ namespace Gibbed.Panopticon.FileFormats.ItemSpecs
             for (int i = 0; i < count; i++)
             {
                 T instance;
-                IItemSpec spec = instance = new();
+                ISpec spec = instance = new();
                 spec.Load(span, ref index, endian);
                 table[i] = instance;
             }
             for (int i = 0; i < count; i++)
             {
-                IItemSpec spec = table[i];
+                ISpec spec = table[i];
                 spec.PostLoad(span, endian);
             }
             return table;
         }
 
-        public void SaveTable(IList<T> table, IArrayBufferWriter<byte> writer, IItemLabeler labeler, Endian endian)
+        public void SaveTable(IList<T> table, IArrayBufferWriter<byte> writer, ILabeler labeler, Endian endian)
         {
             var count = table.Count;
             this.Header.Set(count, writer.WrittenCount);
             for (int i = 0; i < count; i++)
             {
                 T instance;
-                IItemSpec spec = instance = table[i];
+                ISpec spec = instance = table[i];
                 spec.Save(writer, labeler, endian);
             }
             for (int i = 0; i < count; i++)
             {
-                IItemSpec spec = table[i];
+                ISpec spec = table[i];
                 spec.PostSave(writer, labeler, endian);
             }
         }

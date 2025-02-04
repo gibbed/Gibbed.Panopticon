@@ -28,10 +28,10 @@ using Newtonsoft.Json;
 
 namespace Gibbed.Panopticon.FileFormats.ItemSpecs
 {
-    using IItemSpec = ISpec<StringPool, ILabeler<StringPool>>;
-    using IItemLabeler = ILabeler<StringPool>;
+    using ISpec = ISpec<StringPool, ILabeler<StringPool>>;
+    using ILabeler = ILabeler<StringPool>;
 
-    public class CraftRecipeSpec : IItemSpec
+    public class CraftRecipeSpec : ISpec
     {
         internal const int Size = 48;
         internal const int PaddingSize = 8;
@@ -78,7 +78,7 @@ namespace Gibbed.Panopticon.FileFormats.ItemSpecs
         [JsonProperty("unknown26")]
         public ushort Unknown26 { get; set; }
 
-        void IItemSpec.Load(ReadOnlySpan<byte> span, ref int index, Endian endian)
+        void ISpec.Load(ReadOnlySpan<byte> span, ref int index, Endian endian)
         {
             if (span.Length < Size)
             {
@@ -101,7 +101,7 @@ namespace Gibbed.Panopticon.FileFormats.ItemSpecs
             span.SkipPadding(ref index, PaddingSize);
         }
 
-        void IItemSpec.PostLoad(ReadOnlySpan<byte> span, Endian endian)
+        void ISpec.PostLoad(ReadOnlySpan<byte> span, Endian endian)
         {
             this.ProductId = Helpers.ReadString(span, this._ProductIdOffset);
             for (int i = 0; i < MaterialCount; i++)
@@ -110,7 +110,7 @@ namespace Gibbed.Panopticon.FileFormats.ItemSpecs
             }
         }
 
-        void IItemSpec.Save(IArrayBufferWriter<byte> writer, IItemLabeler labeler, Endian endian)
+        void ISpec.Save(IArrayBufferWriter<byte> writer, ILabeler labeler, Endian endian)
         {
             writer.WriteStringRef(this.ProductId, labeler);
             for (int i = 0; i < MaterialCount; i++)
@@ -127,7 +127,7 @@ namespace Gibbed.Panopticon.FileFormats.ItemSpecs
             writer.SkipPadding(PaddingSize);
         }
 
-        void IItemSpec.PostSave(IArrayBufferWriter<byte> writer, IItemLabeler labeler, Endian endian)
+        void ISpec.PostSave(IArrayBufferWriter<byte> writer, ILabeler labeler, Endian endian)
         {
         }
     }

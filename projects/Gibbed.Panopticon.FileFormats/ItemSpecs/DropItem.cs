@@ -24,7 +24,7 @@ using Newtonsoft.Json;
 
 namespace Gibbed.Panopticon.FileFormats.ItemSpecs
 {
-    public struct DropItemSpec
+    public struct DropItem
     {
         [JsonProperty("item_id")]
         public string ItemId;

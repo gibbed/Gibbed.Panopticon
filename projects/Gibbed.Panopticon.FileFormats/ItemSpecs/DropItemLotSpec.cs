@@ -28,10 +28,10 @@ using Newtonsoft.Json;
 
 namespace Gibbed.Panopticon.FileFormats.ItemSpecs
 {
-    using IItemSpec = ISpec<StringPool, ILabeler<StringPool>>;
-    using IItemLabeler = ILabeler<StringPool>;
+    using ISpec = ISpec<StringPool, ILabeler<StringPool>>;
+    using ILabeler = ILabeler<StringPool>;
 
-    public class DropItemLotSpec : IItemSpec
+    public class DropItemLotSpec : ISpec
     {
         internal const int Size = 32;
         internal const int PaddingSize = 4;
@@ -39,16 +39,16 @@ namespace Gibbed.Panopticon.FileFormats.ItemSpecs
         public const int ItemCount = 3;
 
         private readonly int[] _ItemIdOffsets;
-        private readonly DropItemSpec[] _Items;
+        private readonly DropItem[] _Items;
 
         public DropItemLotSpec()
         {
             this._ItemIdOffsets = new int[ItemCount];
-            this._Items = new DropItemSpec[ItemCount];
+            this._Items = new DropItem[ItemCount];
         }
 
         [JsonConstructor]
-        private DropItemLotSpec(DropItemSpec[] items)
+        private DropItemLotSpec(DropItem[] items)
             : this()
         {
             if (items == null)
@@ -66,9 +66,9 @@ namespace Gibbed.Panopticon.FileFormats.ItemSpecs
         public uint Unknown00 { get; set; }
 
         [JsonProperty("items")]
-        public DropItemSpec[] Items => this._Items;
+        public DropItem[] Items => this._Items;
 
-        void IItemSpec.Load(ReadOnlySpan<byte> span, ref int index, Endian endian)
+        void ISpec.Load(ReadOnlySpan<byte> span, ref int index, Endian endian)
         {
             if (span.Length < Size)
             {
@@ -82,7 +82,7 @@ namespace Gibbed.Panopticon.FileFormats.ItemSpecs
             for (int i = 0; i < ItemCount; i++)
             {
                 this._ItemIdOffsets[i] = span.ReadValueS32(ref itemIdIndex, endian);
-                DropItemSpec item;
+                DropItem item;
                 item.ItemId = default;
                 item.Quantity = span.ReadValueU16(ref itemQuantityIndex, endian);
                 item.Weight = span.ReadValueU16(ref itemWeightIndex, endian);
@@ -92,7 +92,7 @@ namespace Gibbed.Panopticon.FileFormats.ItemSpecs
             span.SkipPadding(ref index, PaddingSize);
         }
 
-        void IItemSpec.PostLoad(ReadOnlySpan<byte> span, Endian endian)
+        void ISpec.PostLoad(ReadOnlySpan<byte> span, Endian endian)
         {
             for (int i = 0; i < DropItemLotSpec.ItemCount; i++)
             {
@@ -102,7 +102,7 @@ namespace Gibbed.Panopticon.FileFormats.ItemSpecs
             }
         }
 
-        void IItemSpec.Save(IArrayBufferWriter<byte> writer, IItemLabeler labeler, Endian endian)
+        void ISpec.Save(IArrayBufferWriter<byte> writer, ILabeler labeler, Endian endian)
         {
             writer.WriteValueU32(this.Unknown00, endian);
             for (int i = 0; i < ItemCount; i++)
@@ -120,7 +120,7 @@ namespace Gibbed.Panopticon.FileFormats.ItemSpecs
             writer.SkipPadding(PaddingSize);
         }
 
-        void IItemSpec.PostSave(IArrayBufferWriter<byte> writer, IItemLabeler labeler, Endian endian)
+        void ISpec.PostSave(IArrayBufferWriter<byte> writer, ILabeler labeler, Endian endian)
         {
         }
     }

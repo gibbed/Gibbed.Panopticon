@@ -27,10 +27,10 @@ using Newtonsoft.Json;
 
 namespace Gibbed.Panopticon.FileFormats.ItemSpecs
 {
-    using IItemSpec = ISpec<StringPool, ILabeler<StringPool>>;
-    using IItemLabeler = ILabeler<StringPool>;
+    using ISpec = ISpec<StringPool, ILabeler<StringPool>>;
+    using ILabeler = ILabeler<StringPool>;
 
-    public class RewardCitizenLotSpec : IItemSpec
+    public class RewardCitizenLotSpec : ISpec
     {
         internal const int Size = 32;
 
@@ -66,7 +66,7 @@ namespace Gibbed.Panopticon.FileFormats.ItemSpecs
         [JsonProperty("items")]
         public RewardCitizenLotItem[] ItemIds => this._Items;
 
-        void IItemSpec.Load(ReadOnlySpan<byte> span, ref int index, Endian endian)
+        void ISpec.Load(ReadOnlySpan<byte> span, ref int index, Endian endian)
         {
             if (span.Length < Size)
             {
@@ -87,7 +87,7 @@ namespace Gibbed.Panopticon.FileFormats.ItemSpecs
             index = itemWeightIndex;
         }
 
-        void IItemSpec.PostLoad(ReadOnlySpan<byte> span, Endian endian)
+        void ISpec.PostLoad(ReadOnlySpan<byte> span, Endian endian)
         {
             for (int i = 0; i < ItemCount; i++)
             {
@@ -97,7 +97,7 @@ namespace Gibbed.Panopticon.FileFormats.ItemSpecs
             }
         }
 
-        void IItemSpec.Save(IArrayBufferWriter<byte> writer, IItemLabeler labeler, Endian endian)
+        void ISpec.Save(IArrayBufferWriter<byte> writer, ILabeler labeler, Endian endian)
         {
             for (int i = 0; i < ItemCount; i++)
             {
@@ -110,7 +110,7 @@ namespace Gibbed.Panopticon.FileFormats.ItemSpecs
             }
         }
 
-        void IItemSpec.PostSave(IArrayBufferWriter<byte> writer, IItemLabeler labeler, Endian endian)
+        void ISpec.PostSave(IArrayBufferWriter<byte> writer, ILabeler labeler, Endian endian)
         {
         }
     }

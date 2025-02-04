@@ -27,10 +27,10 @@ using Newtonsoft.Json;
 
 namespace Gibbed.Panopticon.FileFormats.ItemSpecs
 {
-    using IItemSpec = ISpec<StringPool, ILabeler<StringPool>>;
-    using IItemLabeler = ILabeler<StringPool>;
+    using ISpec = ISpec<StringPool, ILabeler<StringPool>>;
+    using ILabeler = ILabeler<StringPool>;
 
-    public class FieldItemLotTableSpec : IItemSpec
+    public class FieldItemLotTableSpec : ISpec
     {
         internal const int Size = 16;
 
@@ -51,7 +51,7 @@ namespace Gibbed.Panopticon.FileFormats.ItemSpecs
         [JsonProperty("lots")]
         public DropItemLotSpec[] Lots { get; set; }
 
-        void IItemSpec.Load(ReadOnlySpan<byte> span, ref int index, Endian endian)
+        void ISpec.Load(ReadOnlySpan<byte> span, ref int index, Endian endian)
         {
             if (span.Length < Size)
             {
@@ -63,20 +63,20 @@ namespace Gibbed.Panopticon.FileFormats.ItemSpecs
             this._Lots.Read(span, ref index, endian);
         }
 
-        void IItemSpec.PostLoad(ReadOnlySpan<byte> span, Endian endian)
+        void ISpec.PostLoad(ReadOnlySpan<byte> span, Endian endian)
         {
             this.FieldId = Helpers.ReadString(span, this._FieldIdOffset);
             this.Lots = this._Lots.LoadTable(span, endian);
         }
 
-        void IItemSpec.Save(IArrayBufferWriter<byte> writer, IItemLabeler labeler, Endian endian)
+        void ISpec.Save(IArrayBufferWriter<byte> writer, ILabeler labeler, Endian endian)
         {
             writer.WriteStringRef(this.FieldId, labeler);
             writer.WriteValueU32(this.Unknown04, endian);
             this._Lots.Write(writer, labeler, endian);
         }
 
-        void IItemSpec.PostSave(IArrayBufferWriter<byte> writer, IItemLabeler labeler, Endian endian)
+        void ISpec.PostSave(IArrayBufferWriter<byte> writer, ILabeler labeler, Endian endian)
         {
             this._Lots.SaveTable(this.Lots, writer, labeler, endian);
         }
