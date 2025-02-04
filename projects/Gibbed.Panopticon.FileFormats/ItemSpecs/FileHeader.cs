@@ -39,29 +39,29 @@ namespace Gibbed.Panopticon.FileFormats.ItemSpecs
 
         public Endian Endian;
         public FileVersion Version;
-        public readonly TableInfo<Item> Items = new();
-        public readonly TableInfo<CraftRecipe> WeaponFacilityRecipes = new();
-        public readonly TableInfo<ProductionRecipe> MunitionFacilityRecipes = new();
-        public readonly TableInfo<ProductionRecipe> MedicalFacilityRecipes = new();
-        public readonly TableInfo<FieldItemLotTable> FieldItemLotTables = new();
-        public readonly TableInfo<UpgradeRecipe>[] WeaponUpgradeRecipesByType;
-        public readonly TableInfo<Unknown70> Unknown70s = new();
-        public readonly TableInfo<RewardCitizenLot> RewardCitizenLots = new();
-        public readonly TableInfo<Unknown80> Unknown80s = new();
-        public readonly TableInfo<Unknown88> Unknown88s = new();
-        public readonly TableInfo<Unknown90> Unknown90s = new();
-        public readonly TableInfo<Unknown98> Unknown98s = new();
-        public readonly TableInfo<UnknownA0> UnknownA0s = new();
-        public readonly TableInfo<UnknownA8> UnknownA8s = new();
-        public readonly TableInfo<CitizenFirstName> CitizenFirstNames = new();
-        public readonly TableInfo<CitizenLastName> CitizenLastNames = new();
-        public readonly TableInfo<UnknownC8> UnknownC8s = new();
-        public readonly TableInfo<UnknownD0> UnknownD0s = new();
-        public readonly TableInfo<UnknownD8> UnknownD8s = new();
+        public readonly TableInfo<ItemSpec> Items = new();
+        public readonly TableInfo<CraftRecipeSpec> WeaponFacilityRecipes = new();
+        public readonly TableInfo<ProductionRecipeSpec> MunitionFacilityRecipes = new();
+        public readonly TableInfo<ProductionRecipeSpec> MedicalFacilityRecipes = new();
+        public readonly TableInfo<FieldItemLotTableSpec> FieldItemLotTables = new();
+        public readonly TableInfo<UpgradeRecipeSpec>[] WeaponUpgradeRecipesByType;
+        public readonly TableInfo<Unknown70Spec> Unknown70s = new();
+        public readonly TableInfo<RewardCitizenLotSpec> RewardCitizenLots = new();
+        public readonly TableInfo<Unknown80Spec> Unknown80s = new();
+        public readonly TableInfo<Unknown88Spec> Unknown88s = new();
+        public readonly TableInfo<Unknown90Spec> Unknown90s = new();
+        public readonly TableInfo<Unknown98Spec> Unknown98s = new();
+        public readonly TableInfo<UnknownA0Spec> UnknownA0s = new();
+        public readonly TableInfo<UnknownA8Spec> UnknownA8s = new();
+        public readonly TableInfo<CitizenFirstNameSpec> CitizenFirstNames = new();
+        public readonly TableInfo<CitizenLastNameSpec> CitizenLastNames = new();
+        public readonly TableInfo<UnknownC8Spec> UnknownC8s = new();
+        public readonly TableInfo<UnknownD0Spec> UnknownD0s = new();
+        public readonly TableInfo<UnknownD8Spec> UnknownD8s = new();
 
         public FileHeader()
         {
-            this.WeaponUpgradeRecipesByType = new TableInfo<UpgradeRecipe>[WeaponTypeCount];
+            this.WeaponUpgradeRecipesByType = new TableInfo<UpgradeRecipeSpec>[WeaponTypeCount];
             for (int i = 0; i < WeaponTypeCount; i++)
             {
                 this.WeaponUpgradeRecipesByType[i] = new();

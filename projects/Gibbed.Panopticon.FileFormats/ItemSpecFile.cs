@@ -35,15 +35,15 @@ namespace Gibbed.Panopticon.FileFormats
     {
         public const int WeaponTypeCount = FileHeader.WeaponTypeCount;
 
-        private readonly UpgradeRecipe[][] _WeaponUpgradeRecipesByType;
+        private readonly UpgradeRecipeSpec[][] _WeaponUpgradeRecipesByType;
 
         public ItemSpecFile()
         {
-            this._WeaponUpgradeRecipesByType = new UpgradeRecipe[WeaponTypeCount][];
+            this._WeaponUpgradeRecipesByType = new UpgradeRecipeSpec[WeaponTypeCount][];
         }
 
         [JsonConstructor]
-        private ItemSpecFile(UpgradeRecipe[][] weaponUpgradeRecipesByType)
+        private ItemSpecFile(UpgradeRecipeSpec[][] weaponUpgradeRecipesByType)
             : this()
         {
             if (weaponUpgradeRecipesByType == null)
@@ -66,61 +66,61 @@ namespace Gibbed.Panopticon.FileFormats
         public FileVersion Version { get; set; }
 
         [JsonProperty("items")]
-        public Item[] Items { get; set; }
+        public ItemSpec[] Items { get; set; }
 
         [JsonProperty("weapon_facility_recipes")]
-        public CraftRecipe[] WeaponFacilityRecipes { get; set; }
+        public CraftRecipeSpec[] WeaponFacilityRecipes { get; set; }
 
         [JsonProperty("munition_facility_recipes")]
-        public ProductionRecipe[] MunitionFacilityRecipes { get; set; }
+        public ProductionRecipeSpec[] MunitionFacilityRecipes { get; set; }
 
         [JsonProperty("medical_facility_recipes")]
-        public ProductionRecipe[] MedicalFacilityRecipes { get; set; }
+        public ProductionRecipeSpec[] MedicalFacilityRecipes { get; set; }
 
         [JsonProperty("field_item_lot_tables")]
-        public FieldItemLotTable[] FieldItemLotTables { get; set; }
+        public FieldItemLotTableSpec[] FieldItemLotTables { get; set; }
 
         [JsonProperty("weapon_upgrade_recipes_by_type", ObjectCreationHandling = ObjectCreationHandling.Reuse)]
-        public UpgradeRecipe[][] WeaponUpgradeRecipesByType => this._WeaponUpgradeRecipesByType;
+        public UpgradeRecipeSpec[][] WeaponUpgradeRecipesByType => this._WeaponUpgradeRecipesByType;
 
         [JsonProperty("unknown70")]
-        public Unknown70[] Unknown70s { get; set; }
+        public Unknown70Spec[] Unknown70s { get; set; }
 
         [JsonProperty("reward_citizen_lots")]
-        public RewardCitizenLot[] RewardCitizenLots { get; set; }
+        public RewardCitizenLotSpec[] RewardCitizenLots { get; set; }
 
         [JsonProperty("unknown80")]
-        public Unknown80[] Unknown80s { get; set; }
+        public Unknown80Spec[] Unknown80s { get; set; }
 
         [JsonProperty("unknown88")]
-        public Unknown88[] Unknown88s { get; set; }
+        public Unknown88Spec[] Unknown88s { get; set; }
 
         [JsonProperty("unknown90")]
-        public Unknown90[] Unknown90s { get; set; }
+        public Unknown90Spec[] Unknown90s { get; set; }
 
         [JsonProperty("unknown98")]
-        public Unknown98[] Unknown98s { get; set; }
+        public Unknown98Spec[] Unknown98s { get; set; }
 
         [JsonProperty("unknownA0")]
-        public UnknownA0[] UnknownA0s { get; set; }
+        public UnknownA0Spec[] UnknownA0s { get; set; }
 
         [JsonProperty("unknownA8")]
-        public UnknownA8[] UnknownA8s { get; set; }
+        public UnknownA8Spec[] UnknownA8s { get; set; }
 
         [JsonProperty("citizen_first_names")]
-        public CitizenFirstName[] CitizenFirstNames { get; set; }
+        public CitizenFirstNameSpec[] CitizenFirstNames { get; set; }
         
         [JsonProperty("citizen_last_names")]
-        public CitizenLastName[] CitizenLastNames { get; set; }
+        public CitizenLastNameSpec[] CitizenLastNames { get; set; }
 
         [JsonProperty("unknownC8")]
-        public UnknownC8[] UnknownC8s { get; set; }
+        public UnknownC8Spec[] UnknownC8s { get; set; }
 
         [JsonProperty("unknownD0")]
-        public UnknownD0[] UnknownD0s { get; set; }
+        public UnknownD0Spec[] UnknownD0s { get; set; }
 
         [JsonProperty("unknownD8")]
-        public UnknownD8[] UnknownD8s { get; set; }
+        public UnknownD8Spec[] UnknownD8s { get; set; }
 
         public static ItemSpecFile Load(ReadOnlySpan<byte> span)
         {

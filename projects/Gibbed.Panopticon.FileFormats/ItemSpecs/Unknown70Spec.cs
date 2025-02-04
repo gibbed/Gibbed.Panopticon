@@ -31,7 +31,7 @@ namespace Gibbed.Panopticon.FileFormats.ItemSpecs
     using IItemSpec = ISpec<StringPool, ILabeler<StringPool>>;
     using IItemLabeler = ILabeler<StringPool>;
 
-    public class Unknown70 : IItemSpec
+    public class Unknown70Spec : IItemSpec
     {
         internal const int Size = 64;
         internal const int PaddingSize = 6;
@@ -43,14 +43,14 @@ namespace Gibbed.Panopticon.FileFormats.ItemSpecs
         private int _Unknown28Offset;
         private int _Unknown2COffset;
 
-        public Unknown70()
+        public Unknown70Spec()
         {
             this._Unknown04Offsets = new int[UnknownCount];
             this._Unknown04 = new Unknown70Entry[UnknownCount];
         }
 
         [JsonConstructor]
-        private Unknown70(Unknown70Entry[] unknown04)
+        private Unknown70Spec(Unknown70Entry[] unknown04)
             : this()
         {
             if (unknown04 == null)

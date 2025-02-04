@@ -31,27 +31,22 @@ namespace Gibbed.Panopticon.FileFormats.ItemSpecs
     using IItemSpec = ISpec<StringPool, ILabeler<StringPool>>;
     using IItemLabeler = ILabeler<StringPool>;
 
-    public class UnknownA8 : IItemSpec
+    public class UnknownD8Spec : IItemSpec
     {
         internal const int Size = 16;
         internal const int PaddingSize = 4;
 
         private int _Unknown00Offset;
+        private int _Unknown04Offset;
 
         [JsonProperty("unknown00")]
         public string Unknown00 { get; set; }
 
         [JsonProperty("unknown04")]
-        public ushort Unknown04 { get; set; }
-
-        [JsonProperty("unknown06")]
-        public ushort Unknown06 { get; set; }
+        public string Unknown04 { get; set; }
 
         [JsonProperty("unknown08")]
-        public ushort Unknown08 { get; set; }
-
-        [JsonProperty("unknown0A")]
-        public ushort Unknown0A { get; set; }
+        public uint Unknown08 { get; set; }
 
         void IItemSpec.Load(ReadOnlySpan<byte> span, ref int index, Endian endian)
         {
@@ -61,25 +56,22 @@ namespace Gibbed.Panopticon.FileFormats.ItemSpecs
             }
 
             this._Unknown00Offset = span.ReadValueS32(ref index, endian);
-            this.Unknown04 = span.ReadValueU16(ref index, endian);
-            this.Unknown06 = span.ReadValueU16(ref index, endian);
-            this.Unknown08 = span.ReadValueU16(ref index, endian);
-            this.Unknown0A = span.ReadValueU16(ref index, endian);
+            this._Unknown04Offset = span.ReadValueS32(ref index, endian);
+            this.Unknown08 = span.ReadValueU32(ref index, endian);
             span.SkipPadding(ref index, PaddingSize);
         }
 
         void IItemSpec.PostLoad(ReadOnlySpan<byte> span, Endian endian)
         {
             this.Unknown00 = Helpers.ReadString(span, this._Unknown00Offset);
+            this.Unknown04 = Helpers.ReadString(span, this._Unknown04Offset);
         }
 
         void IItemSpec.Save(IArrayBufferWriter<byte> writer, IItemLabeler labeler, Endian endian)
         {
             writer.WriteStringRef(this.Unknown00, labeler);
-            writer.WriteValueU16(this.Unknown04, endian);
-            writer.WriteValueU16(this.Unknown06, endian);
-            writer.WriteValueU16(this.Unknown08, endian);
-            writer.WriteValueU16(this.Unknown0A, endian);
+            writer.WriteStringRef(this.Unknown04, labeler, StringPool.LastName);
+            writer.WriteValueU32(this.Unknown08, endian);
             writer.SkipPadding(PaddingSize);
         }
 

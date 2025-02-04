@@ -31,7 +31,7 @@ namespace Gibbed.Panopticon.FileFormats.ItemSpecs
     using IItemSpec = ISpec<StringPool, ILabeler<StringPool>>;
     using IItemLabeler = ILabeler<StringPool>;
 
-    public class ProductionRecipe : IItemSpec
+    public class ProductionRecipeSpec : IItemSpec
     {
         internal const int Size = 48;
         internal const int PaddingSize = 10;

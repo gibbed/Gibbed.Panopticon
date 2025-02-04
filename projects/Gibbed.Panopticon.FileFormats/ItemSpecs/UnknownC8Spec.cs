@@ -25,31 +25,50 @@ using Gibbed.Buffers;
 using Gibbed.Memory;
 using Gibbed.Panopticon.Common;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Converters;
 
 namespace Gibbed.Panopticon.FileFormats.ItemSpecs
 {
     using IItemSpec = ISpec<StringPool, ILabeler<StringPool>>;
     using IItemLabeler = ILabeler<StringPool>;
 
-    public class UnknownA0 : IItemSpec
+    public class UnknownC8Spec : IItemSpec
     {
-        internal const int Size = 16;
-        internal const int PaddingSize = 4;
+        internal const int Size = 32;
+        internal const int PaddingSize = 6;
 
         private int _Unknown00Offset;
-        private int _Unknown04Offset;
 
         [JsonProperty("unknown00")]
         public string Unknown00 { get; set; }
 
         [JsonProperty("unknown04")]
-        public string Unknown04 { get; set; }
+        public uint Unknown04 { get; set; }
 
         [JsonProperty("unknown08")]
-        public ushort Unknown08 { get; set; }
+        public uint Unknown08 { get; set; }
 
-        [JsonProperty("unknown0A")]
-        public ushort Unknown0A { get; set; }
+        [JsonProperty("unknown0C")]
+        public ushort Unknown0C { get; set; }
+
+        [JsonProperty("unknown0E")]
+        public ushort Unknown0E { get; set; }
+
+        [JsonProperty("unknown10")]
+        public ushort Unknown10 { get; set; }
+
+        [JsonProperty("unknown12")]
+        public ushort Unknown12 { get; set; }
+
+        [JsonProperty("gender")]
+        [JsonConverter(typeof(StringEnumConverter))]
+        public CitizenGender Gender { get; set; }
+
+        [JsonProperty("unknown16")]
+        public ushort Unknown16 { get; set; } // bool?
+
+        [JsonProperty("unknown18")]
+        public ushort Unknown18 { get; set; } // bool?
 
         void IItemSpec.Load(ReadOnlySpan<byte> span, ref int index, Endian endian)
         {
@@ -59,24 +78,35 @@ namespace Gibbed.Panopticon.FileFormats.ItemSpecs
             }
 
             this._Unknown00Offset = span.ReadValueS32(ref index, endian);
-            this._Unknown04Offset = span.ReadValueS32(ref index, endian);
-            this.Unknown08 = span.ReadValueU16(ref index, endian);
-            this.Unknown0A = span.ReadValueU16(ref index, endian);
+            this.Unknown04 = span.ReadValueU32(ref index, endian);
+            this.Unknown08 = span.ReadValueU32(ref index, endian);
+            this.Unknown0C = span.ReadValueU16(ref index, endian);
+            this.Unknown0E = span.ReadValueU16(ref index, endian);
+            this.Unknown10 = span.ReadValueU16(ref index, endian);
+            this.Unknown12 = span.ReadValueU16(ref index, endian);
+            this.Gender = (CitizenGender)span.ReadValueU16(ref index, endian);
+            this.Unknown16 = span.ReadValueU16(ref index, endian);
+            this.Unknown18 = span.ReadValueU16(ref index, endian);
             span.SkipPadding(ref index, PaddingSize);
         }
 
         void IItemSpec.PostLoad(ReadOnlySpan<byte> span, Endian endian)
         {
             this.Unknown00 = Helpers.ReadString(span, this._Unknown00Offset);
-            this.Unknown04 = Helpers.ReadString(span, this._Unknown04Offset);
         }
 
         void IItemSpec.Save(IArrayBufferWriter<byte> writer, IItemLabeler labeler, Endian endian)
         {
             writer.WriteStringRef(this.Unknown00, labeler);
-            writer.WriteStringRef(this.Unknown04, labeler);
-            writer.WriteValueU16(this.Unknown08, endian);
-            writer.WriteValueU16(this.Unknown0A, endian);
+            writer.WriteValueU32(this.Unknown04, endian);
+            writer.WriteValueU32(this.Unknown08, endian);
+            writer.WriteValueU16(this.Unknown0C, endian);
+            writer.WriteValueU16(this.Unknown0E, endian);
+            writer.WriteValueU16(this.Unknown10, endian);
+            writer.WriteValueU16(this.Unknown12, endian);
+            writer.WriteValueU16((ushort)this.Gender, endian);
+            writer.WriteValueU16(this.Unknown16, endian);
+            writer.WriteValueU16(this.Unknown18, endian);
             writer.SkipPadding(PaddingSize);
         }
 

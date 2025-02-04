@@ -29,12 +29,12 @@ using Gibbed.Panopticon.Common;
 
 namespace Gibbed.Panopticon.FileFormats
 {
-    internal abstract class Labeler<TStringPool> : ILabeler<TStringPool>
+    internal abstract class LabelerBase<TStringPool> : ILabeler<TStringPool>
         where TStringPool : Enum
     {
         private readonly List<PointerLabel> _PointerLabels;
 
-        public Labeler()
+        public LabelerBase()
         {
             _PointerLabels = new();
         }

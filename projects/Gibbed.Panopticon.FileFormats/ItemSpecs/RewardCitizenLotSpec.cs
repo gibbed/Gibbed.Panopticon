@@ -30,7 +30,7 @@ namespace Gibbed.Panopticon.FileFormats.ItemSpecs
     using IItemSpec = ISpec<StringPool, ILabeler<StringPool>>;
     using IItemLabeler = ILabeler<StringPool>;
 
-    public class RewardCitizenLot : IItemSpec
+    public class RewardCitizenLotSpec : IItemSpec
     {
         internal const int Size = 32;
 
@@ -39,14 +39,14 @@ namespace Gibbed.Panopticon.FileFormats.ItemSpecs
         private readonly int[] _ItemIdOffsets;
         private readonly RewardCitizenLotItem[] _Items;
 
-        public RewardCitizenLot()
+        public RewardCitizenLotSpec()
         {
             this._ItemIdOffsets = new int[ItemCount];
             this._Items = new RewardCitizenLotItem[ItemCount];
         }
 
         [JsonConstructor]
-        private RewardCitizenLot(RewardCitizenLotItem[] items)
+        private RewardCitizenLotSpec(RewardCitizenLotItem[] items)
             : this()
         {
             if (items == null)

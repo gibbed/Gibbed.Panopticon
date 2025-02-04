@@ -25,29 +25,26 @@ using Gibbed.Buffers;
 using Gibbed.Memory;
 using Gibbed.Panopticon.Common;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Converters;
 
 namespace Gibbed.Panopticon.FileFormats.ItemSpecs
 {
     using IItemSpec = ISpec<StringPool, ILabeler<StringPool>>;
     using IItemLabeler = ILabeler<StringPool>;
 
-    public class Unknown98 : IItemSpec
+    public class CitizenFirstNameSpec : IItemSpec
     {
         internal const int Size = 16;
-        internal const int PaddingSize = 4;
+        internal const int PaddingSize = 8;
 
-        private readonly TableInfo<Unknown98Entry> _Unknown04;
+        private int _FirstNameOffset;
 
-        public Unknown98()
-        {
-            this._Unknown04 = new();
-        }
+        [JsonProperty("name")]
+        public string FirstName { get; set; }
 
-        [JsonProperty("unknown00")]
-        public uint Unknown00 { get; set; }
-
-        [JsonProperty("unknown04")]
-        public Unknown98Entry[] Unknown04 { get; set; }
+        [JsonProperty("gender")]
+        [JsonConverter(typeof(StringEnumConverter))]
+        public CitizenGender Gender { get; set; }
 
         void IItemSpec.Load(ReadOnlySpan<byte> span, ref int index, Endian endian)
         {
@@ -56,26 +53,30 @@ namespace Gibbed.Panopticon.FileFormats.ItemSpecs
                 throw new ArgumentOutOfRangeException(nameof(span), "span is too small");
             }
 
-            this.Unknown00 = span.ReadValueU32(ref index, endian);
-            this._Unknown04.Read(span, ref index, endian);
+            this._FirstNameOffset = span.ReadValueS32(ref index, endian);
+            this.Gender = (CitizenGender)span.ReadValueU32(ref index, endian);
             span.SkipPadding(ref index, PaddingSize);
         }
 
         void IItemSpec.PostLoad(ReadOnlySpan<byte> span, Endian endian)
         {
-            this.Unknown04 = this._Unknown04.LoadTable(span, endian);
+            this.FirstName = Helpers.ReadString(span, this._FirstNameOffset);
         }
 
         void IItemSpec.Save(IArrayBufferWriter<byte> writer, IItemLabeler labeler, Endian endian)
         {
-            writer.WriteValueU32(this.Unknown00, endian);
-            this._Unknown04.Write(writer, labeler, endian);
+            writer.WriteStringRef(this.FirstName, labeler, StringPool.FirstName);
+            writer.WriteValueU32((uint)this.Gender, endian);
             writer.SkipPadding(PaddingSize);
         }
 
         void IItemSpec.PostSave(IArrayBufferWriter<byte> writer, IItemLabeler labeler, Endian endian)
         {
-            this._Unknown04.SaveTable(this.Unknown04, writer, labeler, endian);
+        }
+
+        public override string ToString()
+        {
+            return $"{this.FirstName} ({this.Gender})";
         }
     }
 }

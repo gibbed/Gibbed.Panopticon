@@ -31,31 +31,40 @@ namespace Gibbed.Panopticon.FileFormats.ItemSpecs
     using IItemSpec = ISpec<StringPool, ILabeler<StringPool>>;
     using IItemLabeler = ILabeler<StringPool>;
 
-    public class Unknown88 : IItemSpec
+    public class Unknown80Spec : IItemSpec
     {
         internal const int Size = 32;
-        internal const int PaddingSize = 12;
+        internal const int PaddingSize = 14;
 
-        private int _WeaponIdOffset;
-        private int _Unknown10Offset;
+        public const int WeightCount = 8;
 
-        [JsonProperty("weapon_id")]
-        public string WeaponId { get; set; }
+        private readonly ushort[] _Weights;
 
-        [JsonProperty("unknown04")]
-        public uint Unknown04 { get; set; }
+        public Unknown80Spec()
+        {
+            this._Weights = new ushort[WeightCount];
+        }
 
-        [JsonProperty("unknown08")]
-        public ushort Unknown08 { get; set; }
+        [JsonConstructor]
+        private Unknown80Spec(ushort[] weights)
+            : this()
+        {
+            if (weights == null)
+            {
+                throw new ArgumentNullException(nameof(weights));
+            }
+            if (weights.Length != WeightCount)
+            {
+                throw new ArgumentOutOfRangeException(nameof(weights));
+            }
+            Array.Copy(weights, this._Weights, WeightCount);
+        }
 
-        [JsonProperty("unknown0A")]
-        public ushort Unknown0A { get; set; }
-
-        [JsonProperty("unknown0C")]
-        public ushort Unknown0C { get; set; }
+        [JsonProperty("weights")]
+        public ushort[] Weights => this._Weights;
 
         [JsonProperty("unknown10")]
-        public string Unknown10 { get; set; }
+        public ushort Unknown10 { get; set; }
 
         void IItemSpec.Load(ReadOnlySpan<byte> span, ref int index, Endian endian)
         {
@@ -64,31 +73,25 @@ namespace Gibbed.Panopticon.FileFormats.ItemSpecs
                 throw new ArgumentOutOfRangeException(nameof(span), "span is too small");
             }
 
-            this._WeaponIdOffset = span.ReadValueS32(ref index, endian);
-            this.Unknown04 = span.ReadValueU32(ref index, endian);
-            this.Unknown08 = span.ReadValueU16(ref index, endian);
-            this.Unknown0A = span.ReadValueU16(ref index, endian);
-            this.Unknown0C = span.ReadValueU16(ref index, endian);
-            span.SkipPadding(ref index, 2);
-            this._Unknown10Offset = span.ReadValueS32(ref index, endian);
+            for (int i = 0; i < WeightCount; i++)
+            {
+                this._Weights[i] = span.ReadValueU16(ref index, endian);
+            }
+            this.Unknown10 = span.ReadValueU16(ref index, endian);
             span.SkipPadding(ref index, PaddingSize);
         }
 
         void IItemSpec.PostLoad(ReadOnlySpan<byte> span, Endian endian)
         {
-            this.WeaponId = Helpers.ReadString(span, this._WeaponIdOffset);
-            this.Unknown10 = Helpers.ReadString(span, this._Unknown10Offset);
         }
 
         void IItemSpec.Save(IArrayBufferWriter<byte> writer, IItemLabeler labeler, Endian endian)
         {
-            writer.WriteStringRef(this.WeaponId, labeler);
-            writer.WriteValueU32(this.Unknown04, endian);
-            writer.WriteValueU16(this.Unknown08, endian);
-            writer.WriteValueU16(this.Unknown0A, endian);
-            writer.WriteValueU16(this.Unknown0C, endian);
-            writer.SkipPadding(2);
-            writer.WriteStringRef(this.Unknown10, labeler);
+            for (int i = 0; i < WeightCount; i++)
+            {
+                writer.WriteValueU16(this._Weights[i], endian);
+            }
+            writer.WriteValueU16(this.Unknown10, endian);
             writer.SkipPadding(PaddingSize);
         }
 

@@ -31,7 +31,7 @@ namespace Gibbed.Panopticon.FileFormats.ItemSpecs
     using IItemSpec = ISpec<StringPool, ILabeler<StringPool>>;
     using IItemLabeler = ILabeler<StringPool>;
 
-    public class DropItemLot : IItemSpec
+    public class DropItemLotSpec : IItemSpec
     {
         internal const int Size = 32;
         internal const int PaddingSize = 4;
@@ -39,16 +39,16 @@ namespace Gibbed.Panopticon.FileFormats.ItemSpecs
         public const int ItemCount = 3;
 
         private readonly int[] _ItemIdOffsets;
-        private readonly DropItem[] _Items;
+        private readonly DropItemSpec[] _Items;
 
-        public DropItemLot()
+        public DropItemLotSpec()
         {
             this._ItemIdOffsets = new int[ItemCount];
-            this._Items = new DropItem[ItemCount];
+            this._Items = new DropItemSpec[ItemCount];
         }
 
         [JsonConstructor]
-        private DropItemLot(DropItem[] items)
+        private DropItemLotSpec(DropItemSpec[] items)
             : this()
         {
             if (items == null)
@@ -66,7 +66,7 @@ namespace Gibbed.Panopticon.FileFormats.ItemSpecs
         public uint Unknown00 { get; set; }
 
         [JsonProperty("items")]
-        public DropItem[] Items => this._Items;
+        public DropItemSpec[] Items => this._Items;
 
         void IItemSpec.Load(ReadOnlySpan<byte> span, ref int index, Endian endian)
         {
@@ -82,7 +82,7 @@ namespace Gibbed.Panopticon.FileFormats.ItemSpecs
             for (int i = 0; i < ItemCount; i++)
             {
                 this._ItemIdOffsets[i] = span.ReadValueS32(ref itemIdIndex, endian);
-                DropItem item;
+                DropItemSpec item;
                 item.ItemId = default;
                 item.Quantity = span.ReadValueU16(ref itemQuantityIndex, endian);
                 item.Weight = span.ReadValueU16(ref itemWeightIndex, endian);
@@ -94,7 +94,7 @@ namespace Gibbed.Panopticon.FileFormats.ItemSpecs
 
         void IItemSpec.PostLoad(ReadOnlySpan<byte> span, Endian endian)
         {
-            for (int i = 0; i < DropItemLot.ItemCount; i++)
+            for (int i = 0; i < DropItemLotSpec.ItemCount; i++)
             {
                 var item = this.Items[i];
                 item.ItemId = Helpers.ReadString(span, this._ItemIdOffsets[i]);

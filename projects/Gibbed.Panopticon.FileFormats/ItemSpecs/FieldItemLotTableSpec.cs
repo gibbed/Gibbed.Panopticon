@@ -23,7 +23,6 @@
 using System;
 using Gibbed.Buffers;
 using Gibbed.Memory;
-using Gibbed.Panopticon.Common;
 using Newtonsoft.Json;
 
 namespace Gibbed.Panopticon.FileFormats.ItemSpecs
@@ -31,22 +30,26 @@ namespace Gibbed.Panopticon.FileFormats.ItemSpecs
     using IItemSpec = ISpec<StringPool, ILabeler<StringPool>>;
     using IItemLabeler = ILabeler<StringPool>;
 
-    public class UnknownD8 : IItemSpec
+    public class FieldItemLotTableSpec : IItemSpec
     {
         internal const int Size = 16;
-        internal const int PaddingSize = 4;
 
-        private int _Unknown00Offset;
-        private int _Unknown04Offset;
+        private int _FieldIdOffset;
+        private readonly TableInfo<DropItemLotSpec> _Lots;
 
-        [JsonProperty("unknown00")]
-        public string Unknown00 { get; set; }
+        public FieldItemLotTableSpec()
+        {
+            this._Lots = new();
+        }
+
+        [JsonProperty("field_id")]
+        public string FieldId { get; set; }
 
         [JsonProperty("unknown04")]
-        public string Unknown04 { get; set; }
+        public uint Unknown04 { get; set; }
 
-        [JsonProperty("unknown08")]
-        public uint Unknown08 { get; set; }
+        [JsonProperty("lots")]
+        public DropItemLotSpec[] Lots { get; set; }
 
         void IItemSpec.Load(ReadOnlySpan<byte> span, ref int index, Endian endian)
         {
@@ -55,28 +58,32 @@ namespace Gibbed.Panopticon.FileFormats.ItemSpecs
                 throw new ArgumentOutOfRangeException(nameof(span), "span is too small");
             }
 
-            this._Unknown00Offset = span.ReadValueS32(ref index, endian);
-            this._Unknown04Offset = span.ReadValueS32(ref index, endian);
-            this.Unknown08 = span.ReadValueU32(ref index, endian);
-            span.SkipPadding(ref index, PaddingSize);
+            this._FieldIdOffset = span.ReadValueS32(ref index, endian);
+            this.Unknown04 = span.ReadValueU32(ref index, endian);
+            this._Lots.Read(span, ref index, endian);
         }
 
         void IItemSpec.PostLoad(ReadOnlySpan<byte> span, Endian endian)
         {
-            this.Unknown00 = Helpers.ReadString(span, this._Unknown00Offset);
-            this.Unknown04 = Helpers.ReadString(span, this._Unknown04Offset);
+            this.FieldId = Helpers.ReadString(span, this._FieldIdOffset);
+            this.Lots = this._Lots.LoadTable(span, endian);
         }
 
         void IItemSpec.Save(IArrayBufferWriter<byte> writer, IItemLabeler labeler, Endian endian)
         {
-            writer.WriteStringRef(this.Unknown00, labeler);
-            writer.WriteStringRef(this.Unknown04, labeler, StringPool.LastName);
-            writer.WriteValueU32(this.Unknown08, endian);
-            writer.SkipPadding(PaddingSize);
+            writer.WriteStringRef(this.FieldId, labeler);
+            writer.WriteValueU32(this.Unknown04, endian);
+            this._Lots.Write(writer, labeler, endian);
         }
 
         void IItemSpec.PostSave(IArrayBufferWriter<byte> writer, IItemLabeler labeler, Endian endian)
         {
+            this._Lots.SaveTable(this.Lots, writer, labeler, endian);
+        }
+
+        public override string ToString()
+        {
+            return $"field id={this.FieldId}, u04={this.Unknown04}";
         }
     }
 }

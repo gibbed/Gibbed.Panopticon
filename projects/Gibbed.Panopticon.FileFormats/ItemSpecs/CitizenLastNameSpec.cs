@@ -31,40 +31,15 @@ namespace Gibbed.Panopticon.FileFormats.ItemSpecs
     using IItemSpec = ISpec<StringPool, ILabeler<StringPool>>;
     using IItemLabeler = ILabeler<StringPool>;
 
-    public class Unknown80 : IItemSpec
+    public class CitizenLastNameSpec : IItemSpec
     {
-        internal const int Size = 32;
-        internal const int PaddingSize = 14;
+        internal const int Size = 16;
+        internal const int PaddingSize = 12;
 
-        public const int WeightCount = 8;
+        private int _LastNameOffset;
 
-        private readonly ushort[] _Weights;
-
-        public Unknown80()
-        {
-            this._Weights = new ushort[WeightCount];
-        }
-
-        [JsonConstructor]
-        private Unknown80(ushort[] weights)
-            : this()
-        {
-            if (weights == null)
-            {
-                throw new ArgumentNullException(nameof(weights));
-            }
-            if (weights.Length != WeightCount)
-            {
-                throw new ArgumentOutOfRangeException(nameof(weights));
-            }
-            Array.Copy(weights, this._Weights, WeightCount);
-        }
-
-        [JsonProperty("weights")]
-        public ushort[] Weights => this._Weights;
-
-        [JsonProperty("unknown10")]
-        public ushort Unknown10 { get; set; }
+        [JsonProperty("last_name")]
+        public string LastName { get; set; }
 
         void IItemSpec.Load(ReadOnlySpan<byte> span, ref int index, Endian endian)
         {
@@ -73,30 +48,28 @@ namespace Gibbed.Panopticon.FileFormats.ItemSpecs
                 throw new ArgumentOutOfRangeException(nameof(span), "span is too small");
             }
 
-            for (int i = 0; i < WeightCount; i++)
-            {
-                this._Weights[i] = span.ReadValueU16(ref index, endian);
-            }
-            this.Unknown10 = span.ReadValueU16(ref index, endian);
+            this._LastNameOffset = span.ReadValueS32(ref index, endian);
             span.SkipPadding(ref index, PaddingSize);
         }
 
         void IItemSpec.PostLoad(ReadOnlySpan<byte> span, Endian endian)
         {
+            this.LastName = Helpers.ReadString(span, this._LastNameOffset);
         }
 
         void IItemSpec.Save(IArrayBufferWriter<byte> writer, IItemLabeler labeler, Endian endian)
         {
-            for (int i = 0; i < WeightCount; i++)
-            {
-                writer.WriteValueU16(this._Weights[i], endian);
-            }
-            writer.WriteValueU16(this.Unknown10, endian);
+            writer.WriteStringRef(this.LastName, labeler, StringPool.LastName);
             writer.SkipPadding(PaddingSize);
         }
 
         void IItemSpec.PostSave(IArrayBufferWriter<byte> writer, IItemLabeler labeler, Endian endian)
         {
+        }
+
+        public override string ToString()
+        {
+            return $"{this.LastName}";
         }
     }
 }

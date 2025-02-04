@@ -31,25 +31,27 @@ namespace Gibbed.Panopticon.FileFormats.ItemSpecs
     using IItemSpec = ISpec<StringPool, ILabeler<StringPool>>;
     using IItemLabeler = ILabeler<StringPool>;
 
-    public class CraftRecipe : IItemSpec
+    public class UpgradeRecipeSpec : IItemSpec
     {
         internal const int Size = 48;
-        internal const int PaddingSize = 8;
+        internal const int PaddingSize = 2;
 
         public const int MaterialCount = 5;
 
-        private int _ProductIdOffset;
+        private int _OutputItemIdOffset;
+        private int _InputItemIdOffset;
         private readonly int[] _MaterialItemIdOffsets;
-        private readonly Material[] _Materials;
 
-        public CraftRecipe()
+        private Material[] _Materials;
+
+        public UpgradeRecipeSpec()
         {
             this._MaterialItemIdOffsets = new int[MaterialCount];
             this._Materials = new Material[MaterialCount];
         }
 
         [JsonConstructor]
-        private CraftRecipe(Material[] materials)
+        private UpgradeRecipeSpec(Material[] materials)
             : this()
         {
             if (materials == null)
@@ -63,20 +65,26 @@ namespace Gibbed.Panopticon.FileFormats.ItemSpecs
             Array.Copy(materials, this._Materials, MaterialCount);
         }
 
-        [JsonProperty("product_id")]
-        public string ProductId { get; set; }
+        [JsonProperty("output_item_id")]
+        public string OutputItemId { get; set; }
 
-        [JsonProperty("product_type")]
-        public ItemType ProductType { get; set; }
+        [JsonProperty("input_item_id")]
+        public string InputItemId { get; set; }
 
-        [JsonProperty("materials")]
+        [JsonProperty("materials", ObjectCreationHandling = ObjectCreationHandling.Reuse)]
         public Material[] Materials => this._Materials;
-
-        [JsonProperty("unknown24")]
-        public ushort Unknown24 { get; set; }
 
         [JsonProperty("unknown26")]
         public ushort Unknown26 { get; set; }
+
+        [JsonProperty("unknown28")]
+        public ushort Unknown28 { get; set; }
+
+        [JsonProperty("unknown2A")]
+        public ushort Unknown2A { get; set; }
+
+        [JsonProperty("unknown2C")]
+        public ushort Unknown2C { get; set; }
 
         void IItemSpec.Load(ReadOnlySpan<byte> span, ref int index, Endian endian)
         {
@@ -85,45 +93,53 @@ namespace Gibbed.Panopticon.FileFormats.ItemSpecs
                 throw new ArgumentOutOfRangeException(nameof(span), "span is too small");
             }
 
-            this._ProductIdOffset = span.ReadValueS32(ref index, endian);
+            this._OutputItemIdOffset = span.ReadValueS32(ref index, endian);
+            this._InputItemIdOffset = span.ReadValueS32(ref index, endian);
             int materialItemIdIndex = index;
-            int materialQuantityIndex = materialItemIdIndex + MaterialCount * 4 + 2;
+            int materialQuantityIndex = materialItemIdIndex + MaterialCount * 4;
             for (int i = 0; i < MaterialCount; i++)
             {
                 this._MaterialItemIdOffsets[i] = span.ReadValueS32(ref materialItemIdIndex, endian);
-                this._Materials[i].Quantity = span.ReadValueU16(ref materialQuantityIndex, endian);
+                var material = this.Materials[i];
+                material.Quantity = span.ReadValueU16(ref materialQuantityIndex, endian);
+                this.Materials[i] = material;
             }
-            index = materialItemIdIndex;
-            this.ProductType = (ItemType)span.ReadValueU16(ref index, endian);
             index = materialQuantityIndex;
-            this.Unknown24 = span.ReadValueU16(ref index, endian);
             this.Unknown26 = span.ReadValueU16(ref index, endian);
+            this.Unknown28 = span.ReadValueU16(ref index, endian);
+            this.Unknown2A = span.ReadValueU16(ref index, endian);
+            this.Unknown2C = span.ReadValueU16(ref index, endian);
             span.SkipPadding(ref index, PaddingSize);
         }
 
         void IItemSpec.PostLoad(ReadOnlySpan<byte> span, Endian endian)
         {
-            this.ProductId = Helpers.ReadString(span, this._ProductIdOffset);
+            this.OutputItemId = Helpers.ReadString(span, this._OutputItemIdOffset);
+            this.InputItemId = Helpers.ReadString(span, this._InputItemIdOffset);
             for (int i = 0; i < MaterialCount; i++)
             {
-                this._Materials[i].ItemId = Helpers.ReadString(span, this._MaterialItemIdOffsets[i]);
+                var material = this.Materials[i];
+                material.ItemId = Helpers.ReadString(span, this._MaterialItemIdOffsets[i]);
+                this.Materials[i] = material;
             }
         }
 
         void IItemSpec.Save(IArrayBufferWriter<byte> writer, IItemLabeler labeler, Endian endian)
         {
-            writer.WriteStringRef(this.ProductId, labeler);
+            writer.WriteStringRef(this.OutputItemId, labeler);
+            writer.WriteStringRef(this.InputItemId, labeler);
             for (int i = 0; i < MaterialCount; i++)
             {
                 writer.WriteStringRef(this._Materials[i].ItemId, labeler);
             }
-            writer.WriteValueU16((ushort)this.ProductType, endian);
             for (int i = 0; i < MaterialCount; i++)
             {
                 writer.WriteValueU16(this._Materials[i].Quantity, endian);
             }
-            writer.WriteValueU16(this.Unknown24, endian);
             writer.WriteValueU16(this.Unknown26, endian);
+            writer.WriteValueU16(this.Unknown28, endian);
+            writer.WriteValueU16(this.Unknown2A, endian);
+            writer.WriteValueU16(this.Unknown2C, endian);
             writer.SkipPadding(PaddingSize);
         }
 
