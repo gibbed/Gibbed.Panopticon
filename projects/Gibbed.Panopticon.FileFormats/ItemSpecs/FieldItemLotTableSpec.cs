@@ -51,7 +51,7 @@ namespace Gibbed.Panopticon.FileFormats.ItemSpecs
         [JsonProperty("lots")]
         public DropItemLotSpec[] Lots { get; set; }
 
-        void ISpec.Load(ReadOnlySpan<byte> span, ref int index, Endian endian)
+        void ISpec.Load(ReadOnlySpan<byte> span, ref int index, GameVersion version, Endian endian)
         {
             if (span.Length < Size)
             {
@@ -63,22 +63,22 @@ namespace Gibbed.Panopticon.FileFormats.ItemSpecs
             this._Lots.Read(span, ref index, endian);
         }
 
-        void ISpec.PostLoad(ReadOnlySpan<byte> span, Endian endian)
+        void ISpec.PostLoad(ReadOnlySpan<byte> span, GameVersion version, Endian endian)
         {
             this.FieldId = Helpers.ReadString(span, this._FieldIdOffset);
-            this.Lots = this._Lots.LoadTable(span, endian);
+            this.Lots = this._Lots.LoadTable(span, version, endian);
         }
 
-        void ISpec.Save(IArrayBufferWriter<byte> writer, ILabeler labeler, Endian endian)
+        void ISpec.Save(IArrayBufferWriter<byte> writer, ILabeler labeler, GameVersion version, Endian endian)
         {
             writer.WriteStringRef(this.FieldId, labeler);
             writer.WriteValueU32(this.Unknown04, endian);
             this._Lots.Write(writer, labeler, endian);
         }
 
-        void ISpec.PostSave(IArrayBufferWriter<byte> writer, ILabeler labeler, Endian endian)
+        void ISpec.PostSave(IArrayBufferWriter<byte> writer, ILabeler labeler, GameVersion version, Endian endian)
         {
-            this._Lots.SaveTable(this.Lots, writer, labeler, endian);
+            this._Lots.SaveTable(this.Lots, writer, labeler, version, endian);
         }
 
         public override string ToString()

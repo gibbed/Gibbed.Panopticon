@@ -49,7 +49,7 @@ namespace Gibbed.Panopticon.FileFormats.ItemSpecs
         [JsonProperty("unknown04")]
         public Unknown98EntrySpec[] Unknown04 { get; set; }
 
-        void ISpec.Load(ReadOnlySpan<byte> span, ref int index, Endian endian)
+        void ISpec.Load(ReadOnlySpan<byte> span, ref int index, GameVersion version, Endian endian)
         {
             if (span.Length < Size)
             {
@@ -61,21 +61,21 @@ namespace Gibbed.Panopticon.FileFormats.ItemSpecs
             span.SkipPadding(ref index, PaddingSize);
         }
 
-        void ISpec.PostLoad(ReadOnlySpan<byte> span, Endian endian)
+        void ISpec.PostLoad(ReadOnlySpan<byte> span, GameVersion version, Endian endian)
         {
-            this.Unknown04 = this._Unknown04.LoadTable(span, endian);
+            this.Unknown04 = this._Unknown04.LoadTable(span, version, endian);
         }
 
-        void ISpec.Save(IArrayBufferWriter<byte> writer, ILabeler labeler, Endian endian)
+        void ISpec.Save(IArrayBufferWriter<byte> writer, ILabeler labeler, GameVersion version, Endian endian)
         {
             writer.WriteValueU32(this.Unknown00, endian);
             this._Unknown04.Write(writer, labeler, endian);
             writer.SkipPadding(PaddingSize);
         }
 
-        void ISpec.PostSave(IArrayBufferWriter<byte> writer, ILabeler labeler, Endian endian)
+        void ISpec.PostSave(IArrayBufferWriter<byte> writer, ILabeler labeler, GameVersion version, Endian endian)
         {
-            this._Unknown04.SaveTable(this.Unknown04, writer, labeler, endian);
+            this._Unknown04.SaveTable(this.Unknown04, writer, labeler, version, endian);
         }
     }
 }

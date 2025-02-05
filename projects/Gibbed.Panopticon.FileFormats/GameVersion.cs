@@ -20,9 +20,9 @@
  *    distribution.
  */
 
-namespace Gibbed.Panopticon.FileFormats.ItemSpecs
+namespace Gibbed.Panopticon.FileFormats
 {
-    public enum FileVersion
+    public enum GameVersion
     {
         Vita,
         Remaster,

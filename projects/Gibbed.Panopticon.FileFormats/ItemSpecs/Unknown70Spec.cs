@@ -97,7 +97,7 @@ namespace Gibbed.Panopticon.FileFormats.ItemSpecs
         [JsonProperty("unknown38")]
         public ushort Unknown38 { get; set; } // id to Unknown90
 
-        void ISpec.Load(ReadOnlySpan<byte> span, ref int index, Endian endian)
+        void ISpec.Load(ReadOnlySpan<byte> span, ref int index, GameVersion version, Endian endian)
         {
             if (span.Length < Size)
             {
@@ -126,7 +126,7 @@ namespace Gibbed.Panopticon.FileFormats.ItemSpecs
             span.SkipPadding(ref index, PaddingSize);
         }
 
-        void ISpec.PostLoad(ReadOnlySpan<byte> span, Endian endian)
+        void ISpec.PostLoad(ReadOnlySpan<byte> span, GameVersion version, Endian endian)
         {
             for (int i = 0; i < UnknownCount; i++)
             {
@@ -138,7 +138,7 @@ namespace Gibbed.Panopticon.FileFormats.ItemSpecs
             this.Unknown2C = Helpers.ReadString(span, this._Unknown2COffset);
         }
 
-        void ISpec.Save(IArrayBufferWriter<byte> writer, ILabeler labeler, Endian endian)
+        void ISpec.Save(IArrayBufferWriter<byte> writer, ILabeler labeler, GameVersion version, Endian endian)
         {
             writer.WriteValueU32(this.Id, endian);
             for (int i = 0; i < UnknownCount; i++)
@@ -159,7 +159,7 @@ namespace Gibbed.Panopticon.FileFormats.ItemSpecs
             writer.SkipPadding(PaddingSize);
         }
 
-        void ISpec.PostSave(IArrayBufferWriter<byte> writer, ILabeler labeler, Endian endian)
+        void ISpec.PostSave(IArrayBufferWriter<byte> writer, ILabeler labeler, GameVersion version, Endian endian)
         {
         }
     }

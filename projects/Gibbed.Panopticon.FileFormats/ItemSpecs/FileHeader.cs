@@ -38,7 +38,7 @@ namespace Gibbed.Panopticon.FileFormats.ItemSpecs
         public const int WeaponTypeCount = 8;
 
         public Endian Endian;
-        public FileVersion Version;
+        public GameVersion Version;
         public readonly TableInfo<ItemSpec> Items = new();
         public readonly TableInfo<CraftRecipeSpec> WeaponFacilityRecipes = new();
         public readonly TableInfo<ProductionRecipeSpec> MunitionFacilityRecipes = new();
@@ -95,8 +95,8 @@ namespace Gibbed.Panopticon.FileFormats.ItemSpecs
             instance.Items.Read(span, ref index, endian);
             var version = instance.Version = instance.Items.Header.Offset switch
             {
-                0xA0 => FileVersion.Vita,
-                0xE0 => FileVersion.Remaster,
+                0xA0 => GameVersion.Vita,
+                0xE0 => GameVersion.Remaster,
                 _ => throw new FormatException(),
             };
             instance.WeaponFacilityRecipes.Read(span, ref index, endian);
@@ -120,7 +120,7 @@ namespace Gibbed.Panopticon.FileFormats.ItemSpecs
             instance.Unknown88s.Read(span, ref index, endian);
             instance.Unknown90s.Read(span, ref index, endian);
             instance.Unknown98s.Read(span, ref index, endian);
-            if (version == FileVersion.Remaster)
+            if (version == GameVersion.Remaster)
             {
                 instance.UnknownA0s.Read(span, ref index, endian);
                 instance.UnknownA8s.Read(span, ref index, endian);

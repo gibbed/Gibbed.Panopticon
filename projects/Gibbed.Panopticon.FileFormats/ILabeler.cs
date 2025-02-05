@@ -27,7 +27,8 @@ namespace Gibbed.Panopticon.FileFormats
 {
     internal interface ILabeler
     {
-        ILabel WritePointer(IArrayBufferWriter<byte> writer);
+        ILabel<ushort> WriteUInt16(IArrayBufferWriter<byte> writer);
+        ILabel<int> WritePointer(IArrayBufferWriter<byte> writer);
         void WriteStringRef(IArrayBufferWriter<byte> writer, string value);
     }
 

@@ -86,7 +86,7 @@ namespace Gibbed.Panopticon.FileFormats.ItemSpecs
         [JsonProperty("unknown2C")]
         public ushort Unknown2C { get; set; }
 
-        void ISpec.Load(ReadOnlySpan<byte> span, ref int index, Endian endian)
+        void ISpec.Load(ReadOnlySpan<byte> span, ref int index, GameVersion version, Endian endian)
         {
             if (span.Length < Size)
             {
@@ -112,7 +112,7 @@ namespace Gibbed.Panopticon.FileFormats.ItemSpecs
             span.SkipPadding(ref index, PaddingSize);
         }
 
-        void ISpec.PostLoad(ReadOnlySpan<byte> span, Endian endian)
+        void ISpec.PostLoad(ReadOnlySpan<byte> span, GameVersion version, Endian endian)
         {
             this.OutputItemId = Helpers.ReadString(span, this._OutputItemIdOffset);
             this.InputItemId = Helpers.ReadString(span, this._InputItemIdOffset);
@@ -124,7 +124,7 @@ namespace Gibbed.Panopticon.FileFormats.ItemSpecs
             }
         }
 
-        void ISpec.Save(IArrayBufferWriter<byte> writer, ILabeler labeler, Endian endian)
+        void ISpec.Save(IArrayBufferWriter<byte> writer, ILabeler labeler, GameVersion version, Endian endian)
         {
             writer.WriteStringRef(this.OutputItemId, labeler);
             writer.WriteStringRef(this.InputItemId, labeler);
@@ -143,7 +143,7 @@ namespace Gibbed.Panopticon.FileFormats.ItemSpecs
             writer.SkipPadding(PaddingSize);
         }
 
-        void ISpec.PostSave(IArrayBufferWriter<byte> writer, ILabeler labeler, Endian endian)
+        void ISpec.PostSave(IArrayBufferWriter<byte> writer, ILabeler labeler, GameVersion version, Endian endian)
         {
         }
     }

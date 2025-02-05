@@ -51,7 +51,7 @@ namespace Gibbed.Panopticon.FileFormats.ItemSpecs
         [JsonProperty("unknown0A")]
         public ushort Unknown0A { get; set; }
 
-        void ISpec.Load(ReadOnlySpan<byte> span, ref int index, Endian endian)
+        void ISpec.Load(ReadOnlySpan<byte> span, ref int index, GameVersion version, Endian endian)
         {
             if (span.Length < Size)
             {
@@ -65,13 +65,13 @@ namespace Gibbed.Panopticon.FileFormats.ItemSpecs
             span.SkipPadding(ref index, PaddingSize);
         }
 
-        void ISpec.PostLoad(ReadOnlySpan<byte> span, Endian endian)
+        void ISpec.PostLoad(ReadOnlySpan<byte> span, GameVersion version, Endian endian)
         {
             this.Unknown00 = Helpers.ReadString(span, this._Unknown00Offset);
             this.Unknown04 = Helpers.ReadString(span, this._Unknown04Offset);
         }
 
-        void ISpec.Save(IArrayBufferWriter<byte> writer, ILabeler labeler, Endian endian)
+        void ISpec.Save(IArrayBufferWriter<byte> writer, ILabeler labeler, GameVersion version, Endian endian)
         {
             writer.WriteStringRef(this.Unknown00, labeler);
             writer.WriteStringRef(this.Unknown04, labeler);
@@ -80,7 +80,7 @@ namespace Gibbed.Panopticon.FileFormats.ItemSpecs
             writer.SkipPadding(PaddingSize);
         }
 
-        void ISpec.PostSave(IArrayBufferWriter<byte> writer, ILabeler labeler, Endian endian)
+        void ISpec.PostSave(IArrayBufferWriter<byte> writer, ILabeler labeler, GameVersion version, Endian endian)
         {
         }
     }

@@ -26,7 +26,12 @@ namespace Gibbed.Panopticon.FileFormats
 {
     internal static class LabelerHelpers
     {
-        public static ILabel WritePointer(this IArrayBufferWriter<byte> writer, ILabeler labeler)
+        public static ILabel<ushort> WriteUInt16Pointer(this IArrayBufferWriter<byte> writer, ILabeler labeler)
+        {
+            return labeler.WriteUInt16(writer);
+        }
+
+        public static ILabel<int> WritePointer(this IArrayBufferWriter<byte> writer, ILabeler labeler)
         {
             return labeler.WritePointer(writer);
         }

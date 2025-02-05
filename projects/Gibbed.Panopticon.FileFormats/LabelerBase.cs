@@ -32,11 +32,11 @@ namespace Gibbed.Panopticon.FileFormats
     internal abstract class LabelerBase<TStringPool> : ILabeler<TStringPool>
         where TStringPool : Enum
     {
-        private readonly List<PointerLabel> _PointerLabels;
+        private readonly List<ValueLabel> _ValueLabels;
 
         public LabelerBase()
         {
-            _PointerLabels = new();
+            this._ValueLabels = new();
         }
 
         protected abstract StringLabelPool GetStringPool(TStringPool pool);
@@ -44,11 +44,20 @@ namespace Gibbed.Panopticon.FileFormats
 
         public Encoding StringEncoding { get; set; } = Encoding.UTF8;
 
-        public ILabel WritePointer(IArrayBufferWriter<byte> writer)
+        public ILabel<ushort> WriteUInt16(IArrayBufferWriter<byte> writer)
         {
-            var label = new PointerLabel();
-            label.Offsets.Add(writer.WrittenCount);
-            _PointerLabels.Add(label);
+            var label = new UInt16Label();
+            label.Offset = writer.WrittenCount;
+            this._ValueLabels.Add(label);
+            writer.WriteValueU16(ushort.MaxValue, Endian.Little);
+            return label;
+        }
+
+        public ILabel<int> WritePointer(IArrayBufferWriter<byte> writer)
+        {
+            var label = new Int32Label();
+            label.Offset = writer.WrittenCount;
+            this._ValueLabels.Add(label);
             writer.WriteValueS32(-1, Endian.Little);
             return label;
         }
@@ -85,14 +94,9 @@ namespace Gibbed.Panopticon.FileFormats
             }
             stringBytes = stringWriter.WrittenSpan.ToArray();
             stringWriter.Clear();
-            foreach (var pointerLabel in _PointerLabels)
+            foreach (var valueLabel in this._ValueLabels)
             {
-                var value = pointerLabel.Value ?? throw new InvalidOperationException("label has no value set");
-                foreach (var offset in pointerLabel.Offsets)
-                {
-                    writer.Seek(offset);
-                    writer.WriteValueS32(value, endian);
-                }
+                valueLabel.Write(writer, endian);
             }
         }
 
@@ -116,44 +120,64 @@ namespace Gibbed.Panopticon.FileFormats
             }
         }
 
-        protected class BaseLabel
+        protected abstract class ValueLabel
         {
-            private readonly List<int> _Offsets;
+            public int Offset { get; set; }
 
-            public BaseLabel()
-            {
-                _Offsets = new();
-            }
-
-            public List<int> Offsets => _Offsets;
+            public abstract void Write(SimpleBufferWriter<byte> writer, Endian endian);
         }
 
-        protected class PointerLabel : BaseLabel, ILabel
+        protected class UInt16Label : ValueLabel, ILabel<ushort>
+        {
+            private ushort? _Value;
+
+            public int? Value => _Value;
+
+            public void Set(ushort value)
+            {
+                this._Value = value;
+            }
+
+            public override void Write(SimpleBufferWriter<byte> writer, Endian endian)
+            {
+                var value = this._Value ?? throw new InvalidOperationException("label has no value set");
+                writer.Seek(this.Offset);
+                writer.WriteValueU16(value, endian);
+            }
+        }
+
+        protected class Int32Label : ValueLabel, ILabel<int>
         {
             private int? _Value;
-
-            public PointerLabel()
-            {
-            }
 
             public int? Value => _Value;
 
             public void Set(int value)
             {
-                _Value = value;
+                this._Value = value;
+            }
+
+            public override void Write(SimpleBufferWriter<byte> writer, Endian endian)
+            {
+                var value = this._Value ?? throw new InvalidOperationException("label has no value set");
+                writer.Seek(this.Offset);
+                writer.WriteValueS32(value, endian);
             }
         }
 
-        protected class StringLabel : BaseLabel
+        protected class StringLabel
         {
+            private readonly List<int> _Offsets;
             private readonly string _Value;
 
             public StringLabel(string value)
             {
-                _Value = value;
+                this._Offsets = new();
+                this._Value = value;
             }
 
-            public string Value => _Value;
+            public List<int> Offsets => this._Offsets;
+            public string Value => this._Value;
         }
 
         protected class StringLabelPool

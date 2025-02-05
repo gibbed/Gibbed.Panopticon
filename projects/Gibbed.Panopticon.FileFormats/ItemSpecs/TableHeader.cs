@@ -35,8 +35,8 @@ namespace Gibbed.Panopticon.FileFormats.ItemSpecs
         public int Count;
         public int Offset;
 
-        public ILabel CountLabel;
-        public ILabel OffsetLabel;
+        public ILabel<int> CountLabel;
+        public ILabel<int> OffsetLabel;
 
         internal void Read(ReadOnlySpan<byte> span, ref int index, Endian endian)
         {

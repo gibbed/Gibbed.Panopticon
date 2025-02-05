@@ -22,8 +22,8 @@
 
 namespace Gibbed.Panopticon.FileFormats
 {
-    internal interface ILabel
+    internal interface ILabel<T>
     {
-        void Set(int value);
+        void Set(T value);
     }
 }

@@ -55,7 +55,7 @@ namespace Gibbed.Panopticon.FileFormats.ItemSpecs
             this.Header.Write(writer, labeler, endian);
         }
 
-        public T[] LoadTable(ReadOnlySpan<byte> span, Endian endian)
+        public T[] LoadTable(ReadOnlySpan<byte> span, GameVersion version, Endian endian)
         {
             var count = this.Header.Count;
             var table = new T[count];
@@ -64,18 +64,18 @@ namespace Gibbed.Panopticon.FileFormats.ItemSpecs
             {
                 T instance;
                 ISpec spec = instance = new();
-                spec.Load(span, ref index, endian);
+                spec.Load(span, ref index, version, endian);
                 table[i] = instance;
             }
             for (int i = 0; i < count; i++)
             {
                 ISpec spec = table[i];
-                spec.PostLoad(span, endian);
+                spec.PostLoad(span, version, endian);
             }
             return table;
         }
 
-        public void SaveTable(IList<T> table, IArrayBufferWriter<byte> writer, ILabeler labeler, Endian endian)
+        public void SaveTable(IList<T> table, IArrayBufferWriter<byte> writer, ILabeler labeler, GameVersion version, Endian endian)
         {
             var count = table.Count;
             this.Header.Set(count, writer.WrittenCount);
@@ -83,12 +83,12 @@ namespace Gibbed.Panopticon.FileFormats.ItemSpecs
             {
                 T instance;
                 ISpec spec = instance = table[i];
-                spec.Save(writer, labeler, endian);
+                spec.Save(writer, labeler, version, endian);
             }
             for (int i = 0; i < count; i++)
             {
                 ISpec spec = table[i];
-                spec.PostSave(writer, labeler, endian);
+                spec.PostSave(writer, labeler, version, endian);
             }
         }
     }

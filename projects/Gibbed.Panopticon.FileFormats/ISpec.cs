@@ -30,9 +30,9 @@ namespace Gibbed.Panopticon.FileFormats
         where TStringPool : Enum
         where TLabeler : ILabeler<TStringPool>
     {
-        void Load(ReadOnlySpan<byte> span, ref int index, Endian endian);
-        void PostLoad(ReadOnlySpan<byte> span, Endian endian);
-        void Save(IArrayBufferWriter<byte> writer, TLabeler labeler, Endian endian);
-        void PostSave(IArrayBufferWriter<byte> writer, TLabeler labeler, Endian endian);
+        void Load(ReadOnlySpan<byte> span, ref int index, GameVersion version, Endian endian);
+        void PostLoad(ReadOnlySpan<byte> span, GameVersion version, Endian endian);
+        void Save(IArrayBufferWriter<byte> writer, TLabeler labeler, GameVersion version, Endian endian);
+        void PostSave(IArrayBufferWriter<byte> writer, TLabeler labeler, GameVersion version, Endian endian);
     }
 }

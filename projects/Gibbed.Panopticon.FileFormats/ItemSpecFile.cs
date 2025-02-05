@@ -63,7 +63,7 @@ namespace Gibbed.Panopticon.FileFormats
 
         [JsonProperty("version")]
         [JsonConverter(typeof(StringEnumConverter))]
-        public FileVersion Version { get; set; }
+        public GameVersion Version { get; set; }
 
         [JsonProperty("items")]
         public ItemSpec[] Items { get; set; }
@@ -131,30 +131,30 @@ namespace Gibbed.Panopticon.FileFormats
             ItemSpecFile instance = new();
             instance.Endian = endian;
             instance.Version = version;
-            instance.Items = header.Items.LoadTable(span, endian);
-            instance.WeaponFacilityRecipes = header.WeaponFacilityRecipes.LoadTable(span, endian);
-            instance.MunitionFacilityRecipes = header.MunitionFacilityRecipes.LoadTable(span, endian);
-            instance.MedicalFacilityRecipes = header.MedicalFacilityRecipes.LoadTable(span, endian);
-            instance.FieldItemLotTables = header.FieldItemLotTables.LoadTable(span, endian);
+            instance.Items = header.Items.LoadTable(span, version, endian);
+            instance.WeaponFacilityRecipes = header.WeaponFacilityRecipes.LoadTable(span, version, endian);
+            instance.MunitionFacilityRecipes = header.MunitionFacilityRecipes.LoadTable(span, version, endian);
+            instance.MedicalFacilityRecipes = header.MedicalFacilityRecipes.LoadTable(span, version, endian);
+            instance.FieldItemLotTables = header.FieldItemLotTables.LoadTable(span, version, endian);
             for (int i = 0; i < FileHeader.WeaponTypeCount; i++)
             {
-                instance._WeaponUpgradeRecipesByType[i] = header.WeaponUpgradeRecipesByType[i].LoadTable(span, endian);
+                instance._WeaponUpgradeRecipesByType[i] = header.WeaponUpgradeRecipesByType[i].LoadTable(span, version, endian);
             }
-            instance.Unknown70s = header.Unknown70s.LoadTable(span, endian);
-            instance.RewardCitizenLots = header.RewardCitizenLots.LoadTable(span, endian);
-            instance.Unknown80s = header.Unknown80s.LoadTable(span, endian);
-            instance.Unknown88s = header.Unknown88s.LoadTable(span, endian);
-            instance.Unknown90s = header.Unknown90s.LoadTable(span, endian);
-            instance.Unknown98s = header.Unknown98s.LoadTable(span, endian);
-            if (version == FileVersion.Remaster)
+            instance.Unknown70s = header.Unknown70s.LoadTable(span, version, endian);
+            instance.RewardCitizenLots = header.RewardCitizenLots.LoadTable(span, version, endian);
+            instance.Unknown80s = header.Unknown80s.LoadTable(span, version, endian);
+            instance.Unknown88s = header.Unknown88s.LoadTable(span, version, endian);
+            instance.Unknown90s = header.Unknown90s.LoadTable(span, version, endian);
+            instance.Unknown98s = header.Unknown98s.LoadTable(span, version, endian);
+            if (version == GameVersion.Remaster)
             {
-                instance.UnknownA0s = header.UnknownA0s.LoadTable(span, endian);
-                instance.UnknownA8s = header.UnknownA8s.LoadTable(span, endian);
-                instance.CitizenFirstNames = header.CitizenFirstNames.LoadTable(span, endian);
-                instance.CitizenLastNames = header.CitizenLastNames.LoadTable(span, endian);
-                instance.UnknownC8s = header.UnknownC8s.LoadTable(span, endian);
-                instance.UnknownD0s = header.UnknownD0s.LoadTable(span, endian);
-                instance.UnknownD8s = header.UnknownD8s.LoadTable(span, endian);
+                instance.UnknownA0s = header.UnknownA0s.LoadTable(span, version, endian);
+                instance.UnknownA8s = header.UnknownA8s.LoadTable(span, version, endian);
+                instance.CitizenFirstNames = header.CitizenFirstNames.LoadTable(span, version, endian);
+                instance.CitizenLastNames = header.CitizenLastNames.LoadTable(span, version, endian);
+                instance.UnknownC8s = header.UnknownC8s.LoadTable(span, version, endian);
+                instance.UnknownD0s = header.UnknownD0s.LoadTable(span, version, endian);
+                instance.UnknownD8s = header.UnknownD8s.LoadTable(span, version, endian);
             }
             return instance;
         }
@@ -166,30 +166,30 @@ namespace Gibbed.Panopticon.FileFormats
             var version = header.Version = this.Version;
             header.Write(writer, labeler);
 
-            header.Items.SaveTable(this.Items, writer, labeler, endian);
-            header.WeaponFacilityRecipes.SaveTable(this.WeaponFacilityRecipes, writer, labeler, endian);
-            header.MunitionFacilityRecipes.SaveTable(this.MunitionFacilityRecipes, writer, labeler, endian);
-            header.MedicalFacilityRecipes.SaveTable(this.MedicalFacilityRecipes, writer, labeler, endian);
+            header.Items.SaveTable(this.Items, writer, labeler, version, endian);
+            header.WeaponFacilityRecipes.SaveTable(this.WeaponFacilityRecipes, writer, labeler, version, endian);
+            header.MunitionFacilityRecipes.SaveTable(this.MunitionFacilityRecipes, writer, labeler, version, endian);
+            header.MedicalFacilityRecipes.SaveTable(this.MedicalFacilityRecipes, writer, labeler, version, endian);
             for (int i = 0; i < FileHeader.WeaponTypeCount; i++)
             {
-                header.WeaponUpgradeRecipesByType[i].SaveTable(this.WeaponUpgradeRecipesByType[i], writer, labeler, endian);
+                header.WeaponUpgradeRecipesByType[i].SaveTable(this.WeaponUpgradeRecipesByType[i], writer, labeler, version, endian);
             }
-            header.FieldItemLotTables.SaveTable(this.FieldItemLotTables, writer, labeler, endian);
-            header.Unknown70s.SaveTable(this.Unknown70s, writer, labeler, endian);
-            header.RewardCitizenLots.SaveTable(this.RewardCitizenLots, writer, labeler, endian);
-            header.Unknown80s.SaveTable(this.Unknown80s, writer, labeler, endian);
-            header.Unknown88s.SaveTable(this.Unknown88s, writer, labeler, endian);
-            header.Unknown90s.SaveTable(this.Unknown90s, writer, labeler, endian);
-            header.Unknown98s.SaveTable(this.Unknown98s, writer, labeler, endian);
-            if (version == FileVersion.Remaster)
+            header.FieldItemLotTables.SaveTable(this.FieldItemLotTables, writer, labeler, version, endian);
+            header.Unknown70s.SaveTable(this.Unknown70s, writer, labeler, version, endian);
+            header.RewardCitizenLots.SaveTable(this.RewardCitizenLots, writer, labeler, version, endian);
+            header.Unknown80s.SaveTable(this.Unknown80s, writer, labeler, version, endian);
+            header.Unknown88s.SaveTable(this.Unknown88s, writer, labeler, version, endian);
+            header.Unknown90s.SaveTable(this.Unknown90s, writer, labeler, version, endian);
+            header.Unknown98s.SaveTable(this.Unknown98s, writer, labeler, version, endian);
+            if (version == GameVersion.Remaster)
             {
-                header.UnknownA0s.SaveTable(this.UnknownA0s, writer, labeler, endian);
-                header.UnknownA8s.SaveTable(this.UnknownA8s, writer, labeler, endian);
-                header.CitizenFirstNames.SaveTable(this.CitizenFirstNames, writer, labeler, endian);
-                header.CitizenLastNames.SaveTable(this.CitizenLastNames, writer, labeler, endian);
-                header.UnknownC8s.SaveTable(this.UnknownC8s, writer, labeler, endian);
-                header.UnknownD0s.SaveTable(this.UnknownD0s, writer, labeler, endian);
-                header.UnknownD8s.SaveTable(this.UnknownD8s, writer, labeler, endian);
+                header.UnknownA0s.SaveTable(this.UnknownA0s, writer, labeler, version, endian);
+                header.UnknownA8s.SaveTable(this.UnknownA8s, writer, labeler, version, endian);
+                header.CitizenFirstNames.SaveTable(this.CitizenFirstNames, writer, labeler, version, endian);
+                header.CitizenLastNames.SaveTable(this.CitizenLastNames, writer, labeler, version, endian);
+                header.UnknownC8s.SaveTable(this.UnknownC8s, writer, labeler, version, endian);
+                header.UnknownD0s.SaveTable(this.UnknownD0s, writer, labeler, version, endian);
+                header.UnknownD8s.SaveTable(this.UnknownD8s, writer, labeler, version, endian);
             }
         }
 
