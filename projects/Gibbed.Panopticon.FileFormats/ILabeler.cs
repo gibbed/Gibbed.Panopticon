@@ -29,12 +29,14 @@ namespace Gibbed.Panopticon.FileFormats
     {
         ILabel<ushort> WriteUInt16(IArrayBufferWriter<byte> writer);
         ILabel<int> WritePointer(IArrayBufferWriter<byte> writer);
+        void AddString(string value);
         void WriteStringRef(IArrayBufferWriter<byte> writer, string value);
     }
 
     internal interface ILabeler<TStringPool> : ILabeler
         where TStringPool : Enum
     {
+        void AddString(string value, TStringPool pool);
         void WriteStringRef(IArrayBufferWriter<byte> writer, string value, TStringPool pool);
     }
 }

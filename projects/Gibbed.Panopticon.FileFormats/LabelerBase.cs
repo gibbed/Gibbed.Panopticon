@@ -39,6 +39,8 @@ namespace Gibbed.Panopticon.FileFormats
             this._ValueLabels = new();
         }
 
+        public abstract TStringPool DefaultStringPool { get; }
+
         protected abstract StringLabelPool GetStringPool(TStringPool pool);
         protected abstract IEnumerable<StringLabelPool> GetStringPools();
 
@@ -62,7 +64,37 @@ namespace Gibbed.Panopticon.FileFormats
             return label;
         }
 
-        public abstract void WriteStringRef(IArrayBufferWriter<byte> writer, string value);
+        public void AddString(string value)
+        {
+            this.AddString(value, this.DefaultStringPool);
+        }
+
+        public void AddString(string value, TStringPool pool)
+        {
+            _ = this.AddString(value, pool, out _);
+        }
+
+        private bool AddString(string value, TStringPool pool, out StringLabel label)
+        {
+            if (value == null)
+            {
+                label = default;
+                return false;
+            }
+            var stringLabelPool = GetStringPool(pool);
+            if (stringLabelPool.Lookup.TryGetValue(value, out label) == false)
+            {
+                label = new(value);
+                stringLabelPool.Labels.Add(label);
+                stringLabelPool.Lookup.Add(value, label);
+            }
+            return true;
+        }
+
+        public void WriteStringRef(IArrayBufferWriter<byte> writer, string value)
+        {
+            this.WriteStringRef(writer, value, this.DefaultStringPool);
+        }
 
         public void WriteStringRef(IArrayBufferWriter<byte> writer, string value, TStringPool pool)
         {
@@ -71,12 +103,9 @@ namespace Gibbed.Panopticon.FileFormats
                 writer.WriteValueS32(0, Endian.Little);
                 return;
             }
-            var stringLabelPool = GetStringPool(pool);
-            if (stringLabelPool.Lookup.TryGetValue(value, out var label) == false)
+            if (this.AddString(value, pool, out var label) == false)
             {
-                label = new(value);
-                stringLabelPool.Labels.Add(label);
-                stringLabelPool.Lookup.Add(value, label);
+                throw new InvalidOperationException();
             }
             label.Offsets.Add(writer.WrittenCount);
             writer.WriteValueS32(-1, Endian.Little);

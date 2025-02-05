@@ -39,6 +39,8 @@ namespace Gibbed.Panopticon.FileFormats.ItemSpecs
             this._LastNameStringLabelPool = new();
         }
 
+        public override StringPool DefaultStringPool => StringPool.Id;
+
         protected override StringLabelPool GetStringPool(StringPool pool) => pool switch
         {
             StringPool.Id => this._IdStringLabelPool,
@@ -52,11 +54,6 @@ namespace Gibbed.Panopticon.FileFormats.ItemSpecs
             yield return this._IdStringLabelPool;
             yield return this._FirstNameStringLabelPool;
             yield return this._LastNameStringLabelPool;
-        }
-
-        public override void WriteStringRef(IArrayBufferWriter<byte> writer, string value)
-        {
-            WriteStringRef(writer, value, StringPool.Id);
         }
     }
 }
