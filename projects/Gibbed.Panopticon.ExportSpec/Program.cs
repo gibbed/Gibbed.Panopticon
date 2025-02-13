@@ -72,6 +72,7 @@ namespace Gibbed.Panopticon.ExportItemSpec
             var specTypeHandlers = new Dictionary<uint, (string extension, LoadSpecFileDelegate load)>()
             {
                 { ItemSpecFile.Signature, (SpecFileExtensions.Item, ItemSpecFile.Load) },
+                { MachineItemSpecFile.Signature, (SpecFileExtensions.MachineItem, MachineItemSpecFile.Load) },
             };
             var specTypeExtensions = specTypeHandlers.Select(kv => kv.Value.extension).ToList();
 
