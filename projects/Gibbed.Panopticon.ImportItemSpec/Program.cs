@@ -24,11 +24,12 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Text.Json;
+using System.Text.Json.Serialization;
 using Gibbed.Buffers;
 using Gibbed.Panopticon.Common;
 using Gibbed.Panopticon.FileFormats;
 using NDesk.Options;
-using Newtonsoft.Json;
 
 namespace Gibbed.Panopticon.ImportItemSpec
 {
@@ -92,9 +93,20 @@ namespace Gibbed.Panopticon.ImportItemSpec
                 }
             }
 
+            var jsonSerializerOptions = new JsonSerializerOptions()
+            {
+                PropertyNamingPolicy = JsonNamingPolicy.SnakeCaseLower,
+                WriteIndented = true,
+                UnmappedMemberHandling = JsonUnmappedMemberHandling.Disallow,
+                Converters =
+                {
+                    new JsonStringEnumConverter(),
+                },
+            };
+
             foreach (var (inputPath, outputPath) in targets.OrderBy(t => t.inputPath))
             {
-                if (ParseFile(inputPath, out var errors, out var specFile) == false)
+                if (ParseFile(inputPath, jsonSerializerOptions, out var errors, out var specFile) == false)
                 {
                     Console.WriteLine($"Failed to import '{inputPath}'!");
                     foreach (var error in errors)
@@ -112,36 +124,25 @@ namespace Gibbed.Panopticon.ImportItemSpec
             }
         }
 
-        private static bool ParseFile(string path, out List<string> errors, out ItemSpecFile specFile)
+        private static bool ParseFile(
+            string path,
+            JsonSerializerOptions jsonSerializerOptions,
+            out List<string> errors,
+            out ItemSpecFile specFile)
         {
             using (var input = File.OpenRead(path))
-            using (StreamReader streamReader = new(input))
-            using (JsonTextReader reader = new(streamReader))
             {
-                JsonSerializer jsonSerializer = new()
-                {
-                    MissingMemberHandling = MissingMemberHandling.Error,
-                };
                 try
                 {
                     errors = default;
-                    specFile = jsonSerializer.Deserialize<ItemSpecFile>(reader);
+                    specFile = JsonSerializer.Deserialize<ItemSpecFile>(input, jsonSerializerOptions);
                     return true;
                 }
-                catch (JsonSerializationException ex)
+                catch (JsonException ex)
                 {
                     errors = new()
                     {
-                        $"({ex.LineNumber},{ex.LinePosition}): {ex.Message}",
-                    };
-                    specFile = default;
-                    return false;
-                }
-                catch (JsonReaderException ex)
-                {
-                    errors = new()
-                    {
-                        $"({ex.LineNumber},{ex.LinePosition}): {ex.Message}",
+                        $"({1+ex.LineNumber},{1+ex.BytePositionInLine}): {ex.Message}",
                     };
                     specFile = default;
                     return false;

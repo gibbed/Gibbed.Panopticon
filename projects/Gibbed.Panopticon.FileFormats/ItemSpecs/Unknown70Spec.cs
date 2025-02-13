@@ -21,15 +21,15 @@
  */
 
 using System;
+using System.Text.Json.Serialization;
 using Gibbed.Buffers;
 using Gibbed.Memory;
 using Gibbed.Panopticon.Common;
-using Newtonsoft.Json;
 
 namespace Gibbed.Panopticon.FileFormats.ItemSpecs
 {
-    using ISpec = ISpec<StringPool, ILabeler<StringPool>>;
     using ILabeler = ILabeler<StringPool>;
+    using ISpec = ISpec<StringPool, ILabeler<StringPool>>;
 
     public class Unknown70Spec : ISpec
     {
@@ -64,25 +64,25 @@ namespace Gibbed.Panopticon.FileFormats.ItemSpecs
             Array.Copy(unknown04, this._Unknown04, UnknownCount);
         }
 
-        [JsonProperty("id")]
+        [JsonPropertyName("id")]
         public uint Id { get; set; }
 
-        [JsonProperty("unknown04")]
+        [JsonPropertyName("unknown04")]
         public Unknown70Entry[] Unknown04 => this._Unknown04;
 
-        [JsonProperty("unknown28")]
+        [JsonPropertyName("unknown28")]
         public string Unknown28 { get; set; } // bonus item id?
 
-        [JsonProperty("unknown2C")]
+        [JsonPropertyName("unknown2C")]
         public string Unknown2C { get; set; } // another item id?
 
-        [JsonProperty("unknown30")]
+        [JsonPropertyName("unknown30")]
         public ushort Unknown30 { get; set; } // bonus item quantity?
 
-        [JsonProperty("reward_citizen_lot_id")]
+        [JsonPropertyName("reward_citizen_lot_id")]
         public ushort RewardCitizenLotId { get; set; }
 
-        [JsonProperty("unknown34")]
+        [JsonPropertyName("unknown34")]
         public ushort Unknown34 { get; set; } // bonus type? 0-4
 
         // 0 = ID_BTU_RSL_P900 = none
@@ -91,10 +91,10 @@ namespace Gibbed.Panopticon.FileFormats.ItemSpecs
         // 3 = ID_BTU_RSL_P903 = All resources harvested
         // 4 = ID_BTU_RSL_P904 = Minimal Accessory downtime
 
-        [JsonProperty("unknown36")]
+        [JsonPropertyName("unknown36")]
         public ushort Unknown36 { get; set; }
 
-        [JsonProperty("unknown38")]
+        [JsonPropertyName("unknown38")]
         public ushort Unknown38 { get; set; } // id to Unknown90
 
         void ISpec.Load(ReadOnlySpan<byte> span, ref int index, GameVersion version, Endian endian)

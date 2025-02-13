@@ -20,16 +20,18 @@
  *    distribution.
  */
 
-using Newtonsoft.Json;
+using System.Text.Json.Serialization;
 
 namespace Gibbed.Panopticon.FileFormats.ItemSpecs
 {
     public struct Material
     {
-        [JsonProperty("item_id")]
+        [JsonInclude]
+        [JsonPropertyName("item_id")]
         public string ItemId;
 
-        [JsonProperty("quantity")]
+        [JsonInclude]
+        [JsonPropertyName("quantity")]
         public ushort Quantity;
     }
 }

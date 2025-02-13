@@ -21,15 +21,15 @@
  */
 
 using System;
+using System.Text.Json.Serialization;
 using Gibbed.Buffers;
 using Gibbed.Memory;
 using Gibbed.Panopticon.Common;
-using Newtonsoft.Json;
 
 namespace Gibbed.Panopticon.FileFormats.ItemSpecs
 {
-    using ISpec = ISpec<StringPool, ILabeler<StringPool>>;
     using ILabeler = ILabeler<StringPool>;
+    using ISpec = ISpec<StringPool, ILabeler<StringPool>>;
 
     public class CraftRecipeSpec : ISpec
     {
@@ -63,19 +63,19 @@ namespace Gibbed.Panopticon.FileFormats.ItemSpecs
             Array.Copy(materials, this._Materials, MaterialCount);
         }
 
-        [JsonProperty("product_id")]
+        [JsonPropertyName("product_id")]
         public string ProductId { get; set; }
 
-        [JsonProperty("product_type")]
+        [JsonPropertyName("product_type")]
         public ItemType ProductType { get; set; }
 
-        [JsonProperty("materials")]
+        [JsonPropertyName("materials")]
         public Material[] Materials => this._Materials;
 
-        [JsonProperty("unknown24")]
+        [JsonPropertyName("unknown24")]
         public ushort Unknown24 { get; set; }
 
-        [JsonProperty("unknown26")]
+        [JsonPropertyName("unknown26")]
         public ushort Unknown26 { get; set; }
 
         void ISpec.Load(ReadOnlySpan<byte> span, ref int index, GameVersion version, Endian endian)

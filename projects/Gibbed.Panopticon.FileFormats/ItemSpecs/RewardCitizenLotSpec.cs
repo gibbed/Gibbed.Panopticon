@@ -21,14 +21,14 @@
  */
 
 using System;
+using System.Text.Json.Serialization;
 using Gibbed.Buffers;
 using Gibbed.Memory;
-using Newtonsoft.Json;
 
 namespace Gibbed.Panopticon.FileFormats.ItemSpecs
 {
-    using ISpec = ISpec<StringPool, ILabeler<StringPool>>;
     using ILabeler = ILabeler<StringPool>;
+    using ISpec = ISpec<StringPool, ILabeler<StringPool>>;
 
     public class RewardCitizenLotSpec : ISpec
     {
@@ -60,11 +60,11 @@ namespace Gibbed.Panopticon.FileFormats.ItemSpecs
             Array.Copy(items, this._Items, ItemCount);
         }
 
-        [JsonProperty("id")]
+        [JsonPropertyName("id")]
         public ushort Id { get; set; }
 
-        [JsonProperty("items")]
-        public RewardCitizenLotItem[] ItemIds => this._Items;
+        [JsonPropertyName("items")]
+        public RewardCitizenLotItem[] Items => this._Items;
 
         void ISpec.Load(ReadOnlySpan<byte> span, ref int index, GameVersion version, Endian endian)
         {

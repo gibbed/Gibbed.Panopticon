@@ -20,16 +20,18 @@
  *    distribution.
  */
 
-using Newtonsoft.Json;
+using System.Text.Json.Serialization;
 
 namespace Gibbed.Panopticon.FileFormats.ItemSpecs
 {
     public struct RewardCitizenLotItem
     {
-        [JsonProperty("item_id")]
+        [JsonInclude]
+        [JsonPropertyName("item_id")]
         public string ItemId;
 
-        [JsonProperty("weight")]
+        [JsonInclude]
+        [JsonPropertyName("weight")]
         public ushort Weight;
     }
 }

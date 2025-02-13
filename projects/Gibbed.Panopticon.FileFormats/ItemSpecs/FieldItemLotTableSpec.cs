@@ -21,14 +21,14 @@
  */
 
 using System;
+using System.Text.Json.Serialization;
 using Gibbed.Buffers;
 using Gibbed.Memory;
-using Newtonsoft.Json;
 
 namespace Gibbed.Panopticon.FileFormats.ItemSpecs
 {
-    using ISpec = ISpec<StringPool, ILabeler<StringPool>>;
     using ILabeler = ILabeler<StringPool>;
+    using ISpec = ISpec<StringPool, ILabeler<StringPool>>;
 
     public class FieldItemLotTableSpec : ISpec
     {
@@ -42,13 +42,13 @@ namespace Gibbed.Panopticon.FileFormats.ItemSpecs
             this._Lots = new();
         }
 
-        [JsonProperty("field_id")]
+        [JsonPropertyName("field_id")]
         public string FieldId { get; set; }
 
-        [JsonProperty("unknown04")]
+        [JsonPropertyName("unknown04")]
         public uint Unknown04 { get; set; }
 
-        [JsonProperty("lots")]
+        [JsonPropertyName("lots")]
         public DropItemLotSpec[] Lots { get; set; }
 
         void ISpec.Load(ReadOnlySpan<byte> span, ref int index, GameVersion version, Endian endian)

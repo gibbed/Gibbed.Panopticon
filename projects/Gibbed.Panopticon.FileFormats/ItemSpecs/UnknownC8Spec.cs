@@ -21,16 +21,15 @@
  */
 
 using System;
+using System.Text.Json.Serialization;
 using Gibbed.Buffers;
 using Gibbed.Memory;
 using Gibbed.Panopticon.Common;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Converters;
 
 namespace Gibbed.Panopticon.FileFormats.ItemSpecs
 {
-    using ISpec = ISpec<StringPool, ILabeler<StringPool>>;
     using ILabeler = ILabeler<StringPool>;
+    using ISpec = ISpec<StringPool, ILabeler<StringPool>>;
 
     public class UnknownC8Spec : ISpec
     {
@@ -39,35 +38,34 @@ namespace Gibbed.Panopticon.FileFormats.ItemSpecs
 
         private int _Unknown00Offset;
 
-        [JsonProperty("unknown00")]
+        [JsonPropertyName("unknown00")]
         public string Unknown00 { get; set; }
 
-        [JsonProperty("unknown04")]
+        [JsonPropertyName("unknown04")]
         public uint Unknown04 { get; set; }
 
-        [JsonProperty("unknown08")]
+        [JsonPropertyName("unknown08")]
         public uint Unknown08 { get; set; }
 
-        [JsonProperty("unknown0C")]
+        [JsonPropertyName("unknown0C")]
         public ushort Unknown0C { get; set; }
 
-        [JsonProperty("unknown0E")]
+        [JsonPropertyName("unknown0E")]
         public ushort Unknown0E { get; set; }
 
-        [JsonProperty("unknown10")]
+        [JsonPropertyName("unknown10")]
         public ushort Unknown10 { get; set; }
 
-        [JsonProperty("unknown12")]
+        [JsonPropertyName("unknown12")]
         public ushort Unknown12 { get; set; }
 
-        [JsonProperty("gender")]
-        [JsonConverter(typeof(StringEnumConverter))]
+        [JsonPropertyName("gender")]
         public CitizenGender Gender { get; set; }
 
-        [JsonProperty("unknown16")]
+        [JsonPropertyName("unknown16")]
         public ushort Unknown16 { get; set; } // bool?
 
-        [JsonProperty("unknown18")]
+        [JsonPropertyName("unknown18")]
         public ushort Unknown18 { get; set; } // bool?
 
         void ISpec.Load(ReadOnlySpan<byte> span, ref int index, GameVersion version, Endian endian)

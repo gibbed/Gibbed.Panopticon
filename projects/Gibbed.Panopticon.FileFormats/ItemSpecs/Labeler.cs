@@ -22,7 +22,6 @@
 
 using System;
 using System.Collections.Generic;
-using Gibbed.Buffers;
 
 namespace Gibbed.Panopticon.FileFormats.ItemSpecs
 {

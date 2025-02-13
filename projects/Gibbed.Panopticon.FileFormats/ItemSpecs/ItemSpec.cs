@@ -21,15 +21,15 @@
  */
 
 using System;
+using System.Text.Json.Serialization;
 using Gibbed.Buffers;
 using Gibbed.Memory;
 using Gibbed.Panopticon.Common;
-using Newtonsoft.Json;
 
 namespace Gibbed.Panopticon.FileFormats.ItemSpecs
 {
-    using ISpec = ISpec<StringPool, ILabeler<StringPool>>;
     using ILabeler = ILabeler<StringPool>;
+    using ISpec = ISpec<StringPool, ILabeler<StringPool>>;
 
     public class ItemSpec : ISpec
     {
@@ -41,67 +41,67 @@ namespace Gibbed.Panopticon.FileFormats.ItemSpecs
         private int _HintIdOffset;
         private int _DescriptionIdOffset;
 
-        [JsonProperty("id")]
+        [JsonPropertyName("id")]
         public uint Id { get; set; }
 
-        [JsonProperty("key")]
+        [JsonPropertyName("key")]
         public string Key { get; set; }
 
-        [JsonProperty("type")]
+        [JsonPropertyName("type")]
         public ItemType Type { get; set; }
 
-        [JsonProperty("unknown0A")]
+        [JsonPropertyName("unknown0A")]
         public ushort Unknown0A { get; set; }
 
-        [JsonProperty("unknown0C")]
+        [JsonPropertyName("unknown0C")]
         public uint Unknown0C { get; set; }
 
-        [JsonProperty("unknown10")]
+        [JsonPropertyName("unknown10")]
         public short Unknown10 { get; set; }
 
-        [JsonProperty("unknown12")]
+        [JsonPropertyName("unknown12")]
         public ushort Unknown12 { get; set; }
 
-        [JsonProperty("unknown14")]
+        [JsonPropertyName("unknown14")]
         public ushort Unknown14 { get; set; }
 
-        [JsonProperty("unknown16")]
+        [JsonPropertyName("unknown16")]
         public ushort Unknown16 { get; set; }
 
-        [JsonProperty("unknown18")]
+        [JsonPropertyName("unknown18")]
         public ushort Unknown18 { get; set; }
 
-        [JsonProperty("unknown1A")]
+        [JsonPropertyName("unknown1A")]
         public ushort Unknown1A { get; set; }
 
-        [JsonProperty("name_id")]
+        [JsonPropertyName("name_id")]
         public string NameId { get; set; }
 
-        [JsonProperty("hint_id")]
+        [JsonPropertyName("hint_id")]
         public string HintId { get; set; }
 
-        [JsonProperty("desc_id")]
+        [JsonPropertyName("desc_id")]
         public string DescriptionId { get; set; }
 
-        [JsonProperty("unknown28")]
+        [JsonPropertyName("unknown28")]
         public uint Unknown28 { get; set; }
 
-        [JsonProperty("price")]
+        [JsonPropertyName("price")]
         public int Price { get; set; }
 
-        [JsonProperty("gpp")]
+        [JsonPropertyName("gpp")]
         public int GrossPanopticonProduct { get; set; }
 
-        [JsonProperty("max_quantity")]
+        [JsonPropertyName("max_quantity")]
         public ushort MaxQuantity { get; set; }
 
-        [JsonProperty("unknown36")]
+        [JsonPropertyName("unknown36")]
         public ushort Unknown36 { get; set; }
 
-        [JsonProperty("unknown38")]
+        [JsonPropertyName("unknown38")]
         public ushort Unknown38 { get; set; }
         
-        [JsonProperty("unknown3A")]
+        [JsonPropertyName("unknown3A")]
         public ushort Unknown3A { get; set; }
 
         void ISpec.Load(ReadOnlySpan<byte> span, ref int index, GameVersion version, Endian endian)

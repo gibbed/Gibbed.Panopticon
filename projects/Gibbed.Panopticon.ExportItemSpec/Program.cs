@@ -25,10 +25,11 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
+using System.Text.Json.Serialization;
+using System.Text.Json;
 using Gibbed.Panopticon.Common;
 using Gibbed.Panopticon.FileFormats;
 using NDesk.Options;
-using Newtonsoft.Json;
 
 namespace Gibbed.Panopticon.ExportItemSpec
 {
@@ -92,31 +93,24 @@ namespace Gibbed.Panopticon.ExportItemSpec
                 }
             }
 
+            var jsonSerializerOptions = new JsonSerializerOptions()
+            {
+                PropertyNamingPolicy = JsonNamingPolicy.SnakeCaseLower,
+                WriteIndented = true,
+                UnmappedMemberHandling = JsonUnmappedMemberHandling.Disallow,
+                Converters =
+                {
+                    new JsonStringEnumConverter(),
+                },
+            };
+
             foreach (var (inputPath, outputPath) in targets.OrderBy(t => t.inputPath))
             {
                 var inputBytes = File.ReadAllBytes(inputPath);
                 ReadOnlySpan<byte> inputSpan = new(inputBytes);
                 var specFile = ItemSpecFile.Load(inputSpan);
-                Export(specFile, outputPath);
-            }
-        }
-
-        private static void Export(ItemSpecFile specFile, string outputPath)
-        {
-            using (var stringWriter = new StringWriter())
-            using (var writer = new JsonTextWriter(stringWriter))
-            {
-                writer.Formatting = Formatting.Indented;
-                writer.Indentation = 2;
-                writer.IndentChar = ' ';
-
-                var serializer = new JsonSerializer();
-                serializer.Serialize(writer, specFile);
-
-                writer.Flush();
-                stringWriter.Flush();
-
-                File.WriteAllText(outputPath, stringWriter.ToString(), Encoding.UTF8);
+                var specJsonBytes = JsonSerializer.SerializeToUtf8Bytes(specFile, jsonSerializerOptions);
+                File.WriteAllBytes(outputPath, specJsonBytes);
             }
         }
     }

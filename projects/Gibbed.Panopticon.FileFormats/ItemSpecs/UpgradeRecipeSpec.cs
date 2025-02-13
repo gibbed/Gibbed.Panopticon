@@ -21,15 +21,15 @@
  */
 
 using System;
+using System.Text.Json.Serialization;
 using Gibbed.Buffers;
 using Gibbed.Memory;
 using Gibbed.Panopticon.Common;
-using Newtonsoft.Json;
 
 namespace Gibbed.Panopticon.FileFormats.ItemSpecs
 {
-    using ISpec = ISpec<StringPool, ILabeler<StringPool>>;
     using ILabeler = ILabeler<StringPool>;
+    using ISpec = ISpec<StringPool, ILabeler<StringPool>>;
 
     public class UpgradeRecipeSpec : ISpec
     {
@@ -65,25 +65,25 @@ namespace Gibbed.Panopticon.FileFormats.ItemSpecs
             Array.Copy(materials, this._Materials, MaterialCount);
         }
 
-        [JsonProperty("output_item_id")]
+        [JsonPropertyName("output_item_id")]
         public string OutputItemId { get; set; }
 
-        [JsonProperty("input_item_id")]
+        [JsonPropertyName("input_item_id")]
         public string InputItemId { get; set; }
 
-        [JsonProperty("materials", ObjectCreationHandling = ObjectCreationHandling.Reuse)]
+        [JsonPropertyName("materials")]
         public Material[] Materials => this._Materials;
 
-        [JsonProperty("unknown26")]
+        [JsonPropertyName("unknown26")]
         public ushort Unknown26 { get; set; }
 
-        [JsonProperty("unknown28")]
+        [JsonPropertyName("unknown28")]
         public ushort Unknown28 { get; set; }
 
-        [JsonProperty("unknown2A")]
+        [JsonPropertyName("unknown2A")]
         public ushort Unknown2A { get; set; }
 
-        [JsonProperty("unknown2C")]
+        [JsonPropertyName("unknown2C")]
         public ushort Unknown2C { get; set; }
 
         void ISpec.Load(ReadOnlySpan<byte> span, ref int index, GameVersion version, Endian endian)

@@ -21,15 +21,15 @@
  */
 
 using System;
+using System.Text.Json.Serialization;
 using Gibbed.Buffers;
 using Gibbed.Memory;
 using Gibbed.Panopticon.Common;
-using Newtonsoft.Json;
 
 namespace Gibbed.Panopticon.FileFormats.ItemSpecs
 {
-    using ISpec = ISpec<StringPool, ILabeler<StringPool>>;
     using ILabeler = ILabeler<StringPool>;
+    using ISpec = ISpec<StringPool, ILabeler<StringPool>>;
 
     public class ProductionRecipeSpec : ISpec
     {
@@ -38,58 +38,58 @@ namespace Gibbed.Panopticon.FileFormats.ItemSpecs
 
         private int _ProductIdOffset;
 
-        [JsonProperty("product_id")]
+        [JsonPropertyName("product_id")]
         public string ProductId { get; set; }
 
-        [JsonProperty("unknown04")]
+        [JsonPropertyName("unknown04")]
         public ushort Unknown04 { get; set; }
 
-        [JsonProperty("unknown06")]
+        [JsonPropertyName("unknown06")]
         public ushort Unknown06 { get; set; }
 
-        [JsonProperty("unknown08")]
+        [JsonPropertyName("unknown08")]
         public ushort Unknown08 { get; set; }
 
-        [JsonProperty("unknown0A")]
+        [JsonPropertyName("unknown0A")]
         public ushort Unknown0A { get; set; }
 
-        [JsonProperty("unknown0C")]
+        [JsonPropertyName("unknown0C")]
         public ushort Unknown0C { get; set; }
 
-        [JsonProperty("unknown0E")]
+        [JsonPropertyName("unknown0E")]
         public ushort Unknown0E { get; set; }
 
-        [JsonProperty("unknown10")]
+        [JsonPropertyName("unknown10")]
         public ushort Unknown10 { get; set; }
 
-        [JsonProperty("unknown12")]
+        [JsonPropertyName("unknown12")]
         public ushort Unknown12 { get; set; }
 
-        [JsonProperty("unknown14")]
+        [JsonPropertyName("unknown14")]
         public ushort Unknown14 { get; set; }
 
-        [JsonProperty("unknown16")]
+        [JsonPropertyName("unknown16")]
         public ushort Unknown16 { get; set; }
 
-        [JsonProperty("unknown18")]
+        [JsonPropertyName("unknown18")]
         public ushort Unknown18 { get; set; }
 
-        [JsonProperty("unknown1A")]
+        [JsonPropertyName("unknown1A")]
         public ushort Unknown1A { get; set; }
 
-        [JsonProperty("unknown1C")]
+        [JsonPropertyName("unknown1C")]
         public ushort Unknown1C { get; set; }
 
-        [JsonProperty("unknown1E")]
+        [JsonPropertyName("unknown1E")]
         public ushort Unknown1E { get; set; }
 
-        [JsonProperty("unknown20")]
+        [JsonPropertyName("unknown20")]
         public ushort Unknown20 { get; set; }
 
-        [JsonProperty("unknown22")]
+        [JsonPropertyName("unknown22")]
         public ushort Unknown22 { get; set; }
 
-        [JsonProperty("unknown24")]
+        [JsonPropertyName("unknown24")]
         public ushort Unknown24 { get; set; }
 
         void ISpec.Load(ReadOnlySpan<byte> span, ref int index, GameVersion version, Endian endian)

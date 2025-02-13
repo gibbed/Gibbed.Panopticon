@@ -21,15 +21,15 @@
  */
 
 using System;
+using System.Text.Json.Serialization;
 using Gibbed.Buffers;
 using Gibbed.Memory;
 using Gibbed.Panopticon.Common;
-using Newtonsoft.Json;
 
 namespace Gibbed.Panopticon.FileFormats.ItemSpecs
 {
-    using ISpec = ISpec<StringPool, ILabeler<StringPool>>;
     using ILabeler = ILabeler<StringPool>;
+    using ISpec = ISpec<StringPool, ILabeler<StringPool>>;
 
     public class DropItemLotSpec : ISpec
     {
@@ -62,10 +62,10 @@ namespace Gibbed.Panopticon.FileFormats.ItemSpecs
             Array.Copy(items, this._Items, ItemCount);
         }
 
-        [JsonProperty("unknown00")]
+        [JsonPropertyName("unknown00")]
         public uint Unknown00 { get; set; }
 
-        [JsonProperty("items")]
+        [JsonPropertyName("items")]
         public DropItem[] Items => this._Items;
 
         void ISpec.Load(ReadOnlySpan<byte> span, ref int index, GameVersion version, Endian endian)

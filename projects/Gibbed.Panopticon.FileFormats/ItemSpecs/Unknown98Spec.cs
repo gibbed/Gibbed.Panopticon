@@ -21,15 +21,15 @@
  */
 
 using System;
+using System.Text.Json.Serialization;
 using Gibbed.Buffers;
 using Gibbed.Memory;
 using Gibbed.Panopticon.Common;
-using Newtonsoft.Json;
 
 namespace Gibbed.Panopticon.FileFormats.ItemSpecs
 {
-    using ISpec = ISpec<StringPool, ILabeler<StringPool>>;
     using ILabeler = ILabeler<StringPool>;
+    using ISpec = ISpec<StringPool, ILabeler<StringPool>>;
 
     public class Unknown98Spec : ISpec
     {
@@ -43,10 +43,10 @@ namespace Gibbed.Panopticon.FileFormats.ItemSpecs
             this._Unknown04 = new();
         }
 
-        [JsonProperty("unknown00")]
+        [JsonPropertyName("unknown00")]
         public uint Unknown00 { get; set; }
 
-        [JsonProperty("unknown04")]
+        [JsonPropertyName("unknown04")]
         public Unknown98EntrySpec[] Unknown04 { get; set; }
 
         void ISpec.Load(ReadOnlySpan<byte> span, ref int index, GameVersion version, Endian endian)

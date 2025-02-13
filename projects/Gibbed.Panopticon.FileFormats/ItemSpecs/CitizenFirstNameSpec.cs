@@ -21,16 +21,15 @@
  */
 
 using System;
+using System.Text.Json.Serialization;
 using Gibbed.Buffers;
 using Gibbed.Memory;
 using Gibbed.Panopticon.Common;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Converters;
 
 namespace Gibbed.Panopticon.FileFormats.ItemSpecs
 {
-    using ISpec = ISpec<StringPool, ILabeler<StringPool>>;
     using ILabeler = ILabeler<StringPool>;
+    using ISpec = ISpec<StringPool, ILabeler<StringPool>>;
 
     public class CitizenFirstNameSpec : ISpec
     {
@@ -39,11 +38,10 @@ namespace Gibbed.Panopticon.FileFormats.ItemSpecs
 
         private int _FirstNameOffset;
 
-        [JsonProperty("name")]
+        [JsonPropertyName("name")]
         public string FirstName { get; set; }
 
-        [JsonProperty("gender")]
-        [JsonConverter(typeof(StringEnumConverter))]
+        [JsonPropertyName("gender")]
         public CitizenGender Gender { get; set; }
 
         void ISpec.Load(ReadOnlySpan<byte> span, ref int index, GameVersion version, Endian endian)

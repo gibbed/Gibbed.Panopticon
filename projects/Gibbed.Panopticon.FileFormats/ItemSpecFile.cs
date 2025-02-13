@@ -21,11 +21,10 @@
  */
 
 using System;
+using System.Text.Json.Serialization;
 using Gibbed.Buffers;
 using Gibbed.Memory;
 using Gibbed.Panopticon.FileFormats.ItemSpecs;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Converters;
 
 namespace Gibbed.Panopticon.FileFormats
 {
@@ -57,69 +56,67 @@ namespace Gibbed.Panopticon.FileFormats
             Array.Copy(weaponUpgradeRecipesByType, this._WeaponUpgradeRecipesByType, WeaponTypeCount);
         }
 
-        [JsonProperty("endian")]
-        [JsonConverter(typeof(StringEnumConverter))]
+        [JsonPropertyName("endian")]
         public Endian Endian { get; set; }
 
-        [JsonProperty("version")]
-        [JsonConverter(typeof(StringEnumConverter))]
+        [JsonPropertyName("version")]
         public GameVersion Version { get; set; }
 
-        [JsonProperty("items")]
+        [JsonPropertyName("items")]
         public ItemSpec[] Items { get; set; }
 
-        [JsonProperty("weapon_facility_recipes")]
+        [JsonPropertyName("weapon_facility_recipes")]
         public CraftRecipeSpec[] WeaponFacilityRecipes { get; set; }
 
-        [JsonProperty("munition_facility_recipes")]
+        [JsonPropertyName("munition_facility_recipes")]
         public ProductionRecipeSpec[] MunitionFacilityRecipes { get; set; }
 
-        [JsonProperty("medical_facility_recipes")]
+        [JsonPropertyName("medical_facility_recipes")]
         public ProductionRecipeSpec[] MedicalFacilityRecipes { get; set; }
 
-        [JsonProperty("field_item_lot_tables")]
+        [JsonPropertyName("field_item_lot_tables")]
         public FieldItemLotTableSpec[] FieldItemLotTables { get; set; }
 
-        [JsonProperty("weapon_upgrade_recipes_by_type", ObjectCreationHandling = ObjectCreationHandling.Reuse)]
+        [JsonPropertyName("weapon_upgrade_recipes_by_type")]
         public UpgradeRecipeSpec[][] WeaponUpgradeRecipesByType => this._WeaponUpgradeRecipesByType;
 
-        [JsonProperty("unknown70")]
+        [JsonPropertyName("unknown70")]
         public Unknown70Spec[] Unknown70s { get; set; }
 
-        [JsonProperty("reward_citizen_lots")]
+        [JsonPropertyName("reward_citizen_lots")]
         public RewardCitizenLotSpec[] RewardCitizenLots { get; set; }
 
-        [JsonProperty("unknown80")]
+        [JsonPropertyName("unknown80")]
         public Unknown80Spec[] Unknown80s { get; set; }
 
-        [JsonProperty("unknown88")]
+        [JsonPropertyName("unknown88")]
         public Unknown88Spec[] Unknown88s { get; set; }
 
-        [JsonProperty("unknown90")]
+        [JsonPropertyName("unknown90")]
         public Unknown90Spec[] Unknown90s { get; set; }
 
-        [JsonProperty("unknown98")]
+        [JsonPropertyName("unknown98")]
         public Unknown98Spec[] Unknown98s { get; set; }
 
-        [JsonProperty("unknownA0")]
+        [JsonPropertyName("unknownA0")]
         public UnknownA0Spec[] UnknownA0s { get; set; }
 
-        [JsonProperty("unknownA8")]
+        [JsonPropertyName("unknownA8")]
         public UnknownA8Spec[] UnknownA8s { get; set; }
 
-        [JsonProperty("citizen_first_names")]
+        [JsonPropertyName("citizen_first_names")]
         public CitizenFirstNameSpec[] CitizenFirstNames { get; set; }
         
-        [JsonProperty("citizen_last_names")]
+        [JsonPropertyName("citizen_last_names")]
         public CitizenLastNameSpec[] CitizenLastNames { get; set; }
 
-        [JsonProperty("unknownC8")]
+        [JsonPropertyName("unknownC8")]
         public UnknownC8Spec[] UnknownC8s { get; set; }
 
-        [JsonProperty("unknownD0")]
+        [JsonPropertyName("unknownD0")]
         public UnknownD0Spec[] UnknownD0s { get; set; }
 
-        [JsonProperty("unknownD8")]
+        [JsonPropertyName("unknownD8")]
         public UnknownD8Spec[] UnknownD8s { get; set; }
 
         public static ItemSpecFile Load(ReadOnlySpan<byte> span)

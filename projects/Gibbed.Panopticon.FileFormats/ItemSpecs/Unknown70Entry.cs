@@ -20,16 +20,18 @@
  *    distribution.
  */
 
-using Newtonsoft.Json;
+using System.Text.Json.Serialization;
 
 namespace Gibbed.Panopticon.FileFormats.ItemSpecs
 {
     public struct Unknown70Entry
     {
-        [JsonProperty("unknown04")]
+        [JsonInclude]
+        [JsonPropertyName("unknown04")]
         public string Unknown04;
 
-        [JsonProperty("unknown0C")]
+        [JsonInclude]
+        [JsonPropertyName("unknown0C")]
         public ushort Unknown0C;
     }
 }
