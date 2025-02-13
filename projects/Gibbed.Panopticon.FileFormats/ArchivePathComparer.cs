@@ -55,7 +55,7 @@ namespace Gibbed.Panopticon.FileFormats
                     break;
                 }
 
-                prefixLength = Math.Min(leftEnd - leftStart, rightEnd - rightStart);
+                prefixLength = System.Math.Min(leftEnd - leftStart, rightEnd - rightStart);
                 result = string.Compare(
                     left, leftStart,
                     right, rightStart,
@@ -70,7 +70,7 @@ namespace Gibbed.Panopticon.FileFormats
                 rightStart = rightEnd + 1;
             }
 
-            prefixLength = Math.Min(left.Length - leftStart, right.Length - rightStart);
+            prefixLength = System.Math.Min(left.Length - leftStart, right.Length - rightStart);
             result = string.Compare(
                 left, leftStart,
                 right, rightStart,
