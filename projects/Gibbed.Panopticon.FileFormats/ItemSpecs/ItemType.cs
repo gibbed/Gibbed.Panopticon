@@ -30,10 +30,10 @@ namespace Gibbed.Panopticon.FileFormats.ItemSpecs
         Booster = 3, // BST  augmentation
         Key = 4, // KEY
         Citizen = 5, // CIT
-        ResourceSouvenir = 6, // SWS  cut content
-        ResourceGeneralL = 7, // RES
-        ResourceOnHigh = 8, // RES
-        ResourceGeneralS = 9, // RES
+        ResourceLocal = 6, // SWS  "Souvenir"; cut content
+        ResourceArtificial = 7, // RES  "General (L)"
+        ResourceHeaven = 8, // RES  "On High"; internally called 'tengoku', which is the Japanese word for heaven (天国)
+        ResourceSimple = 9, // RES  "General (S)"
         Modular = 10, // EFF  Module
     }
 }
