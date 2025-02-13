@@ -36,16 +36,16 @@ namespace Gibbed.Panopticon.FileFormats.ItemSpecs
         internal const int Size = 64;
         internal const int PaddingSize = 4;
 
-        private int _KeyOffset;
+        private int _IdOffset;
         private int _NameIdOffset;
         private int _HintIdOffset;
         private int _DescriptionIdOffset;
 
-        [JsonPropertyName("id")]
-        public uint Id { get; set; }
+        [JsonPropertyName("no")]
+        public uint IdNo { get; set; }
 
-        [JsonPropertyName("key")]
-        public string Key { get; set; }
+        [JsonPropertyName("id")]
+        public string Id { get; set; }
 
         [JsonPropertyName("type")]
         public ItemType Type { get; set; }
@@ -111,8 +111,8 @@ namespace Gibbed.Panopticon.FileFormats.ItemSpecs
                 throw new ArgumentOutOfRangeException(nameof(span), "span is too small");
             }
 
-            this.Id = span.ReadValueU32(ref index, endian);
-            this._KeyOffset = span.ReadValueS32(ref index, endian);
+            this.IdNo = span.ReadValueU32(ref index, endian);
+            this._IdOffset = span.ReadValueS32(ref index, endian);
             this.Type = (ItemType)span.ReadValueU16(ref index, endian);
             this.Unknown0A = span.ReadValueU16(ref index, endian);
             this.Unknown0C = span.ReadValueU32(ref index, endian);
@@ -137,7 +137,7 @@ namespace Gibbed.Panopticon.FileFormats.ItemSpecs
 
         void ISpec.PostLoad(ReadOnlySpan<byte> span, GameVersion version, Endian endian)
         {
-            this.Key = Helpers.ReadString(span, this._KeyOffset);
+            this.Id = Helpers.ReadString(span, this._IdOffset);
             this.NameId = Helpers.ReadString(span, this._NameIdOffset);
             this.HintId = Helpers.ReadString(span, this._HintIdOffset);
             this.DescriptionId = Helpers.ReadString(span, this._DescriptionIdOffset);
@@ -145,8 +145,8 @@ namespace Gibbed.Panopticon.FileFormats.ItemSpecs
 
         void ISpec.Save(IArrayBufferWriter<byte> writer, ILabeler labeler, GameVersion version, Endian endian)
         {
-            writer.WriteValueU32(this.Id, endian);
-            writer.WriteStringRef(this.Key, labeler);
+            writer.WriteValueU32(this.IdNo, endian);
+            writer.WriteStringRef(this.Id, labeler);
             writer.WriteValueU16((ushort)this.Type, endian);
             writer.WriteValueU16(this.Unknown0A, endian);
             writer.WriteValueU32(this.Unknown0C, endian);
@@ -175,7 +175,7 @@ namespace Gibbed.Panopticon.FileFormats.ItemSpecs
 
         public override string ToString()
         {
-            return $"id={this.Id}, key={this.Key}, type={this.Type}, u0A={this.Unknown0A}, u0C={this.Unknown0C}, u10={this.Unknown10}, u12={this.Unknown12}, u14={this.Unknown14}, u16={this.Unknown16}, u18={this.Unknown18}, u1A={this.Unknown1A}, name id={this.NameId}, hint id={this.HintId}, desc id={this.DescriptionId}, u28={this.Unknown28}, price={this.Price}, gpp={this.GrossPanopticonProduct}, max quantity={this.MaxQuantity}, u36={this.Unknown36}, u38={this.Unknown38}, u3A={this.Unknown3A}";
+            return $"id={this.IdNo}, key={this.Id}, type={this.Type}, u0A={this.Unknown0A}, u0C={this.Unknown0C}, u10={this.Unknown10}, u12={this.Unknown12}, u14={this.Unknown14}, u16={this.Unknown16}, u18={this.Unknown18}, u1A={this.Unknown1A}, name id={this.NameId}, hint id={this.HintId}, desc id={this.DescriptionId}, u28={this.Unknown28}, price={this.Price}, gpp={this.GrossPanopticonProduct}, max quantity={this.MaxQuantity}, u36={this.Unknown36}, u38={this.Unknown38}, u3A={this.Unknown3A}";
         }
     }
 }
