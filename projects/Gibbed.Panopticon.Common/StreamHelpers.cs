@@ -135,7 +135,7 @@ namespace Gibbed.Panopticon.Common
             var buffer = new byte[bufferSize];
             while (left > 0)
             {
-                var blockSize = (int)Math.Min(left, bufferSize);
+                var blockSize = (int)System.Math.Min(left, bufferSize);
                 var read = input.Read(buffer, 0, blockSize);
                 if (read != blockSize)
                 {
@@ -163,7 +163,7 @@ namespace Gibbed.Panopticon.Common
             var buffer = new byte[bufferSize];
             while (left > 0)
             {
-                var blockSize = (int)Math.Min(left, bufferSize);
+                var blockSize = (int)System.Math.Min(left, bufferSize);
                 var readSize = input.Read(buffer, 0, blockSize);
                 if (readSize != blockSize)
                 {

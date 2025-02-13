@@ -14,6 +14,7 @@
     <PackageReference Include="System.Memory" Version="4.6.0" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\Gibbed.Buffers\Gibbed.Buffers.csproj" />
     <ProjectReference Include="..\Gibbed.Memory\Gibbed.Memory.csproj" />
   </ItemGroup>
 </Project>
