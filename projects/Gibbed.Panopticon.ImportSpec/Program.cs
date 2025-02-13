@@ -67,18 +67,26 @@ namespace Gibbed.Panopticon.ImportItemSpec
             }
 
             const string inputExtension = ".json";
-            const string outputExtension = ".ispec";
 
             var inputBasePath = Path.GetFullPath(extras[0]);
 
-            List<(string inputPath, string outputPath)> targets = new();
+            List<(string inputPath, string outputPathBase, bool wantExtension)> targets = new();
             if (Directory.Exists(inputBasePath) == false)
             {
                 var inputPath = inputBasePath;
-                string outputPath = extras.Count > 1
-                    ? Path.GetFullPath(extras[1])
-                    : Path.ChangeExtension(inputPath, outputExtension);
-                targets.Add((inputPath, outputPath));
+                bool wantExtension;
+                string outputPathBase;
+                if (extras.Count > 1)
+                {
+                    outputPathBase = Path.GetFullPath(extras[1]);
+                    wantExtension = false;
+                }
+                else
+                {
+                    outputPathBase = Path.ChangeExtension(inputPath, null);
+                    wantExtension = true;
+                }
+                targets.Add((inputPath, outputPathBase, wantExtension));
             }
             else
             {
@@ -88,8 +96,8 @@ namespace Gibbed.Panopticon.ImportItemSpec
                     {
                         continue;
                     }
-                    var outputPath = Path.ChangeExtension(inputPath, outputExtension);
-                    targets.Add((inputPath, outputPath));
+                    var outputPathBase = Path.ChangeExtension(inputPath, null);
+                    targets.Add((inputPath, outputPathBase, true));
                 }
             }
 
@@ -104,7 +112,7 @@ namespace Gibbed.Panopticon.ImportItemSpec
                 },
             };
 
-            foreach (var (inputPath, outputPath) in targets.OrderBy(t => t.inputPath))
+            foreach (var (inputPath, outputPathBase, wantExtension) in targets.OrderBy(t => t.inputPath))
             {
                 if (ParseFile(inputPath, jsonSerializerOptions, out var errors, out var specFile) == false)
                 {
@@ -115,6 +123,10 @@ namespace Gibbed.Panopticon.ImportItemSpec
                     }
                     continue;
                 }
+
+                var outputPath = wantExtension == true
+                    ? outputPathBase + specFile.FileExtension
+                    : outputPathBase;
 
                 PooledArrayBufferWriter<byte> writer = new();
                 specFile.Save(writer);

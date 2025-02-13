@@ -24,11 +24,12 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Text;
-using System.Text.Json.Serialization;
 using System.Text.Json;
+using System.Text.Json.Serialization;
+using Gibbed.Memory;
 using Gibbed.Panopticon.Common;
 using Gibbed.Panopticon.FileFormats;
+using Hexarc.Serialization.Union;
 using NDesk.Options;
 
 namespace Gibbed.Panopticon.ExportItemSpec
@@ -66,8 +67,13 @@ namespace Gibbed.Panopticon.ExportItemSpec
                 return;
             }
 
-            const string inputExtension = ".ispec";
             const string outputExtension = ".json";
+
+            var specTypeHandlers = new Dictionary<uint, (string extension, LoadSpecFileDelegate load)>()
+            {
+                { ItemSpecFile.Signature, (SpecFileExtensions.Item, ItemSpecFile.Load) },
+            };
+            var specTypeExtensions = specTypeHandlers.Select(kv => kv.Value.extension).ToList();
 
             var inputBasePath = Path.GetFullPath(extras[0]);
 
@@ -84,7 +90,7 @@ namespace Gibbed.Panopticon.ExportItemSpec
             {
                 foreach (var inputPath in Directory.EnumerateFiles(inputBasePath, "*", SearchOption.AllDirectories))
                 {
-                    if (Path.GetExtension(inputPath) != inputExtension)
+                    if (specTypeExtensions.Contains(Path.GetExtension(inputPath).ToLowerInvariant()) == false)
                     {
                         continue;
                     }
@@ -101,6 +107,7 @@ namespace Gibbed.Panopticon.ExportItemSpec
                 Converters =
                 {
                     new JsonStringEnumConverter(),
+                    new UnionConverterFactory(),
                 },
             };
 
@@ -108,10 +115,36 @@ namespace Gibbed.Panopticon.ExportItemSpec
             {
                 var inputBytes = File.ReadAllBytes(inputPath);
                 ReadOnlySpan<byte> inputSpan = new(inputBytes);
-                var specFile = ItemSpecFile.Load(inputSpan);
+                if (GetMagic(inputSpan, out var magic) == false)
+                {
+                    Console.WriteLine($"Failed to get signature for '{inputPath}'!");
+                    continue;
+                }
+
+                if (specTypeHandlers.TryGetValue(magic, out var handler) == false)
+                {
+                    Console.WriteLine($"Unsupported spec file type '{inputPath}'!");
+                    continue;
+                }
+
+                var specFile = handler.load(inputSpan);
                 var specJsonBytes = JsonSerializer.SerializeToUtf8Bytes(specFile, jsonSerializerOptions);
                 File.WriteAllBytes(outputPath, specJsonBytes);
             }
+        }
+
+        private delegate BaseSpecFile LoadSpecFileDelegate(ReadOnlySpan<byte> span);
+
+        private static bool GetMagic(ReadOnlySpan<byte> span, out uint magic)
+        {
+            if (span.Length < 4)
+            {
+                magic = default;
+                return false;
+            }
+            int index = 0;
+            magic = span.ReadValueU32(ref index, Endian.Little);
+            return true;
         }
     }
 }

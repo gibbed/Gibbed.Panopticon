@@ -30,8 +30,15 @@ namespace Gibbed.Panopticon.FileFormats
 {
     using IItemLabeler = ILabeler<StringPool>;
 
-    public class ItemSpecFile
+    public class ItemSpecFile : BaseSpecFile
     {
+        public const uint Signature = FileHeader.Signature;
+
+        public override SpecFileType Type => SpecFileType.Item;
+
+        [JsonIgnore]
+        public override string FileExtension => SpecFileExtensions.Item;
+
         public const int WeaponTypeCount = FileHeader.WeaponTypeCount;
 
         private readonly UpgradeRecipeSpec[][] _WeaponUpgradeRecipesByType;

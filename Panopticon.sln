@@ -5,11 +5,11 @@ VisualStudioVersion = 17.11.35222.181
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Archives", "Archives", "{B9B9E60C-79E7-4088-8337-D171DB14B25F}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "ItemSpec", "ItemSpec", "{0F1AF6B0-2C37-4AEB-96BD-A12BD175F25D}"
-EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Messages", "Messages", "{2FDB1412-CCE1-4AEA-B983-099D17600F41}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Misc", "Misc", "{F586FFD6-13AD-47FA-8F44-2DAC6E3EA1AB}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Spec", "Spec", "{0F1AF6B0-2C37-4AEB-96BD-A12BD175F25D}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tools", "Tools", "{B4E35E68-EB7D-4373-B95E-C61EDF0A423B}"
 EndProject
@@ -21,19 +21,21 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Gibbed.Memory", "projects\G
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Gibbed.Panopticon.Common", "projects\Gibbed.Panopticon.Common\Gibbed.Panopticon.Common.csproj", "{92EEA627-5980-4251-90A6-D3A64EC6467C}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Gibbed.Panopticon.ExportItemSpec", "projects\Gibbed.Panopticon.ExportItemSpec\Gibbed.Panopticon.ExportItemSpec.csproj", "{62EB828F-81C1-45D5-8408-A7357CEA2AE2}"
-EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Gibbed.Panopticon.ExportMessages", "projects\Gibbed.Panopticon.ExportMessages\Gibbed.Panopticon.ExportMessages.csproj", "{EDF1203D-A18F-44ED-BF37-6E2C04FA200C}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Gibbed.Panopticon.ExportSpec", "projects\Gibbed.Panopticon.ExportSpec\Gibbed.Panopticon.ExportSpec.csproj", "{62EB828F-81C1-45D5-8408-A7357CEA2AE2}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Gibbed.Panopticon.FileFormats", "projects\Gibbed.Panopticon.FileFormats\Gibbed.Panopticon.FileFormats.csproj", "{6B63FE18-66D1-406C-99B7-909455CC74C9}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Gibbed.Panopticon.ImportItemSpec", "projects\Gibbed.Panopticon.ImportItemSpec\Gibbed.Panopticon.ImportItemSpec.csproj", "{9CFCE4A0-DFD1-4193-8BF7-512F95775761}"
-EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Gibbed.Panopticon.ImportMessages", "projects\Gibbed.Panopticon.ImportMessages\Gibbed.Panopticon.ImportMessages.csproj", "{60A61004-53ED-4212-BCA0-424CA1FFB16B}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Gibbed.Panopticon.ImportSpec", "projects\Gibbed.Panopticon.ImportSpec\Gibbed.Panopticon.ImportSpec.csproj", "{9CFCE4A0-DFD1-4193-8BF7-512F95775761}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Gibbed.Panopticon.Pack", "projects\Gibbed.Panopticon.Pack\Gibbed.Panopticon.Pack.csproj", "{D47227BA-7F76-4A84-86D4-BC8581655A3F}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Gibbed.Panopticon.Unpack", "projects\Gibbed.Panopticon.Unpack\Gibbed.Panopticon.Unpack.csproj", "{1CCE93EA-EA45-42B3-A300-8721A46750E7}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Hexarc.Serialization.Union", "projects\Hexarc.Serialization.Union\Hexarc.Serialization.Union.csproj", "{F80D3617-CDCA-4B76-8253-EAC2C9BC0077}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NDesk.Options", "projects\NDesk.Options\NDesk.Options.csproj", "{F2083024-2EA3-4632-8697-905D00D2EB23}"
 EndProject
@@ -93,6 +95,10 @@ Global
 		{F2083024-2EA3-4632-8697-905D00D2EB23}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{F2083024-2EA3-4632-8697-905D00D2EB23}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{F2083024-2EA3-4632-8697-905D00D2EB23}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F80D3617-CDCA-4B76-8253-EAC2C9BC0077}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F80D3617-CDCA-4B76-8253-EAC2C9BC0077}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F80D3617-CDCA-4B76-8253-EAC2C9BC0077}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F80D3617-CDCA-4B76-8253-EAC2C9BC0077}.Release|Any CPU.Build.0 = Release|Any CPU
 		{F9AEE635-9D67-4BB2-A506-94E369D3C1AE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{F9AEE635-9D67-4BB2-A506-94E369D3C1AE}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{F9AEE635-9D67-4BB2-A506-94E369D3C1AE}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -115,6 +121,7 @@ Global
 		{D47227BA-7F76-4A84-86D4-BC8581655A3F} = {B9B9E60C-79E7-4088-8337-D171DB14B25F}
 		{EDF1203D-A18F-44ED-BF37-6E2C04FA200C} = {2FDB1412-CCE1-4AEA-B983-099D17600F41}
 		{F2083024-2EA3-4632-8697-905D00D2EB23} = {F586FFD6-13AD-47FA-8F44-2DAC6E3EA1AB}
+		{F80D3617-CDCA-4B76-8253-EAC2C9BC0077} = {F586FFD6-13AD-47FA-8F44-2DAC6E3EA1AB}
 		{F9AEE635-9D67-4BB2-A506-94E369D3C1AE} = {F586FFD6-13AD-47FA-8F44-2DAC6E3EA1AB}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution

@@ -19,5 +19,6 @@
     <ProjectReference Include="..\Gibbed.IO\Gibbed.IO.csproj" />
     <ProjectReference Include="..\Gibbed.Memory\Gibbed.Memory.csproj" />
     <ProjectReference Include="..\Gibbed.Panopticon.Common\Gibbed.Panopticon.Common.csproj" />
+    <ProjectReference Include="..\Hexarc.Serialization.Union\Hexarc.Serialization.Union.csproj" />
   </ItemGroup>
 </Project>

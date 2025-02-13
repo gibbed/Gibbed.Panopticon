@@ -20,6 +20,7 @@
   <ItemGroup>
     <ProjectReference Include="..\Gibbed.Panopticon.FileFormats\Gibbed.Panopticon.FileFormats.csproj" />
     <ProjectReference Include="..\Gibbed.Memory\Gibbed.Memory.csproj" />
+    <ProjectReference Include="..\Hexarc.Serialization.Union\Hexarc.Serialization.Union.csproj" />
     <ProjectReference Include="..\NDesk.Options\NDesk.Options.csproj" />
     <ProjectReference Include="..\Tommy\Tommy\Tommy.csproj" />
   </ItemGroup>
