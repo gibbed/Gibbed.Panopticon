@@ -26,12 +26,15 @@ namespace Gibbed.Panopticon.FileFormats.MachineItemSpecs
 {
     public struct PartDropItem
     {
+        [JsonInclude]
         [JsonPropertyName("weight")]
         public ushort Weight;
 
+        [JsonInclude]
         [JsonPropertyName("quantity")]
         public ushort Quantity;
 
+        [JsonInclude]
         [JsonPropertyName("item_id")]
         public string ItemId;
     }

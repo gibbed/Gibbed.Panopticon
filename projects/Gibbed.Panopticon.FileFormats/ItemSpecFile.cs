@@ -197,7 +197,7 @@ namespace Gibbed.Panopticon.FileFormats
             }
         }
 
-        public void Save(IArrayBufferWriter<byte> writer)
+        public override void Save(IArrayBufferWriter<byte> writer)
         {
             var endian = this.Endian;
             PooledArrayBufferWriter<byte> buffer = new();

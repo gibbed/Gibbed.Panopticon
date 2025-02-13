@@ -148,7 +148,7 @@ namespace Gibbed.Panopticon.FileFormats
             AddStrings(labeler, this.Unknown10s);
         }
 
-        public void Save(IArrayBufferWriter<byte> writer)
+        public override void Save(IArrayBufferWriter<byte> writer)
         {
             var endian = this.Endian;
             PooledArrayBufferWriter<byte> buffer = new();

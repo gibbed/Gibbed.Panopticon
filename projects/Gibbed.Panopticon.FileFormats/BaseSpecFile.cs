@@ -21,6 +21,7 @@
  */
 
 using System.Text.Json.Serialization;
+using Gibbed.Buffers;
 using Hexarc.Serialization.Union;
 
 namespace Gibbed.Panopticon.FileFormats
@@ -35,5 +36,7 @@ namespace Gibbed.Panopticon.FileFormats
 
         [JsonIgnore]
         public abstract string FileExtension { get; }
+
+        public abstract void Save(IArrayBufferWriter<byte> writer);
     }
 }

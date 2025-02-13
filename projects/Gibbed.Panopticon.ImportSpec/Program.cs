@@ -29,6 +29,7 @@ using System.Text.Json.Serialization;
 using Gibbed.Buffers;
 using Gibbed.Panopticon.Common;
 using Gibbed.Panopticon.FileFormats;
+using Hexarc.Serialization.Union;
 using NDesk.Options;
 
 namespace Gibbed.Panopticon.ImportItemSpec
@@ -109,6 +110,7 @@ namespace Gibbed.Panopticon.ImportItemSpec
                 Converters =
                 {
                     new JsonStringEnumConverter(),
+                    new UnionConverterFactory(),
                 },
             };
 
@@ -140,14 +142,14 @@ namespace Gibbed.Panopticon.ImportItemSpec
             string path,
             JsonSerializerOptions jsonSerializerOptions,
             out List<string> errors,
-            out ItemSpecFile specFile)
+            out BaseSpecFile specFile)
         {
             using (var input = File.OpenRead(path))
             {
                 try
                 {
                     errors = default;
-                    specFile = JsonSerializer.Deserialize<ItemSpecFile>(input, jsonSerializerOptions);
+                    specFile = JsonSerializer.Deserialize<BaseSpecFile>(input, jsonSerializerOptions);
                     return true;
                 }
                 catch (JsonException ex)
