@@ -22,6 +22,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Text.Json.Serialization;
 using Gibbed.Buffers;
 using Gibbed.Memory;
@@ -46,6 +47,7 @@ namespace Gibbed.Panopticon.FileFormats
 
         public ItemSpecFile()
         {
+            this.ShouldReorderOnSave = true;
             this._WeaponUpgradeRecipesByType = new List<UpgradeRecipeSpec>[WeaponTypeCount];
             for (int i = 0; i < WeaponTypeCount; i++)
             {
@@ -72,6 +74,10 @@ namespace Gibbed.Panopticon.FileFormats
                 this._WeaponUpgradeRecipesByType[i].AddRange(weaponUpgradeRecipesByType[i]);
             }
         }
+
+        [DefaultValue(true)]
+        [JsonPropertyName("should_reorder")]
+        public bool ShouldReorderOnSave { get; set; }
 
         [JsonPropertyName("endian")]
         public Endian Endian { get; set; }
@@ -123,7 +129,7 @@ namespace Gibbed.Panopticon.FileFormats
 
         [JsonPropertyName("citizen_first_names")]
         public List<CitizenFirstNameSpec> CitizenFirstNames { get; set; }
-        
+
         [JsonPropertyName("citizen_last_names")]
         public List<CitizenLastNameSpec> CitizenLastNames { get; set; }
 
@@ -207,8 +213,21 @@ namespace Gibbed.Panopticon.FileFormats
             }
         }
 
+        private void ReorderItems()
+        {
+            this.Items.Sort(ItemSorting.Sort);
+            for (int i = 0; i < this.Items.Count; i++)
+            {
+                this.Items[i].IdNo = (uint)i;
+            }
+        }
+
         public override void Save(IArrayBufferWriter<byte> writer)
         {
+            if (this.ShouldReorderOnSave == true)
+            {
+                this.ReorderItems();
+            }
             var endian = this.Endian;
             PooledArrayBufferWriter<byte> buffer = new();
             Labeler labeler = new();
