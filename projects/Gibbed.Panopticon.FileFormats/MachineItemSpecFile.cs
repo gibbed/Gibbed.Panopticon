@@ -21,6 +21,7 @@
  */
 
 using System;
+using System.Collections.Generic;
 using System.Text.Json.Serialization;
 using Gibbed.Buffers;
 using Gibbed.Memory;
@@ -46,10 +47,10 @@ namespace Gibbed.Panopticon.FileFormats
         public GameVersion Version { get; set; }
 
         [JsonPropertyName("unknown08")]
-        public MachineItemLotSpec[] Unknown08s { get; set; }
+        public List<MachineItemLotSpec> Unknown08s { get; set; }
 
         [JsonPropertyName("unknown10")]
-        public MachineItemLotSpec[] Unknown10s { get; set; }
+        public List<MachineItemLotSpec> Unknown10s { get; set; }
 
         private static bool DetermineGameVersion(
             TableInfo<MachineItemLotSpec> tableInfo,
@@ -113,7 +114,7 @@ namespace Gibbed.Panopticon.FileFormats
             header.Unknown10s.SaveTable(this.Unknown10s, writer, labeler, version,endian);
         }
 
-        private static void AddStrings(Labeler labeler, MachineItemLotSpec[] machineItemLots)
+        private static void AddStrings(Labeler labeler, IEnumerable<MachineItemLotSpec> machineItemLots)
         {
             if (machineItemLots == null)
             {

@@ -21,6 +21,7 @@
  */
 
 using System;
+using System.Collections.Generic;
 using System.Text.Json.Serialization;
 using Gibbed.Buffers;
 using Gibbed.Memory;
@@ -41,15 +42,21 @@ namespace Gibbed.Panopticon.FileFormats
 
         public const int WeaponTypeCount = FileHeader.WeaponTypeCount;
 
-        private readonly UpgradeRecipeSpec[][] _WeaponUpgradeRecipesByType;
+        private readonly List<UpgradeRecipeSpec>[] _WeaponUpgradeRecipesByType;
 
         public ItemSpecFile()
         {
-            this._WeaponUpgradeRecipesByType = new UpgradeRecipeSpec[WeaponTypeCount][];
+            this._WeaponUpgradeRecipesByType = new List<UpgradeRecipeSpec>[WeaponTypeCount];
+            for (int i = 0; i < WeaponTypeCount; i++)
+            {
+                this._WeaponUpgradeRecipesByType[i] = new();
+            }
         }
 
         [JsonConstructor]
-        private ItemSpecFile(UpgradeRecipeSpec[][] weaponUpgradeRecipesByType)
+#pragma warning disable IDE0051 // Remove unused private members
+        private ItemSpecFile(List<UpgradeRecipeSpec>[] weaponUpgradeRecipesByType)
+#pragma warning restore IDE0051 // Remove unused private members
             : this()
         {
             if (weaponUpgradeRecipesByType == null)
@@ -60,7 +67,10 @@ namespace Gibbed.Panopticon.FileFormats
             {
                 throw new ArgumentOutOfRangeException(nameof(weaponUpgradeRecipesByType));
             }
-            Array.Copy(weaponUpgradeRecipesByType, this._WeaponUpgradeRecipesByType, WeaponTypeCount);
+            for (int i = 0; i < WeaponTypeCount; i++)
+            {
+                this._WeaponUpgradeRecipesByType[i].AddRange(weaponUpgradeRecipesByType[i]);
+            }
         }
 
         [JsonPropertyName("endian")]
@@ -70,61 +80,61 @@ namespace Gibbed.Panopticon.FileFormats
         public GameVersion Version { get; set; }
 
         [JsonPropertyName("items")]
-        public ItemSpec[] Items { get; set; }
+        public List<ItemSpec> Items { get; set; }
 
         [JsonPropertyName("weapon_facility_recipes")]
-        public CraftRecipeSpec[] WeaponFacilityRecipes { get; set; }
+        public List<CraftRecipeSpec> WeaponFacilityRecipes { get; set; }
 
         [JsonPropertyName("munition_facility_recipes")]
-        public ProductionRecipeSpec[] MunitionFacilityRecipes { get; set; }
+        public List<ProductionRecipeSpec> MunitionFacilityRecipes { get; set; }
 
         [JsonPropertyName("medical_facility_recipes")]
-        public ProductionRecipeSpec[] MedicalFacilityRecipes { get; set; }
+        public List<ProductionRecipeSpec> MedicalFacilityRecipes { get; set; }
 
         [JsonPropertyName("field_item_lot_tables")]
-        public FieldItemLotTableSpec[] FieldItemLotTables { get; set; }
+        public List<FieldItemLotTableSpec> FieldItemLotTables { get; set; }
 
         [JsonPropertyName("weapon_upgrade_recipes_by_type")]
-        public UpgradeRecipeSpec[][] WeaponUpgradeRecipesByType => this._WeaponUpgradeRecipesByType;
+        public List<UpgradeRecipeSpec>[] WeaponUpgradeRecipesByType => this._WeaponUpgradeRecipesByType;
 
         [JsonPropertyName("unknown70")]
-        public Unknown70Spec[] Unknown70s { get; set; }
+        public List<Unknown70Spec> Unknown70s { get; set; }
 
         [JsonPropertyName("reward_citizen_lots")]
-        public RewardCitizenLotSpec[] RewardCitizenLots { get; set; }
+        public List<RewardCitizenLotSpec> RewardCitizenLots { get; set; }
 
         [JsonPropertyName("unknown80")]
-        public Unknown80Spec[] Unknown80s { get; set; }
+        public List<Unknown80Spec> Unknown80s { get; set; }
 
         [JsonPropertyName("unknown88")]
-        public Unknown88Spec[] Unknown88s { get; set; }
+        public List<Unknown88Spec> Unknown88s { get; set; }
 
         [JsonPropertyName("unknown90")]
-        public Unknown90Spec[] Unknown90s { get; set; }
+        public List<Unknown90Spec> Unknown90s { get; set; }
 
         [JsonPropertyName("unknown98")]
-        public Unknown98Spec[] Unknown98s { get; set; }
+        public List<Unknown98Spec> Unknown98s { get; set; }
 
         [JsonPropertyName("unknownA0")]
-        public UnknownA0Spec[] UnknownA0s { get; set; }
+        public List<UnknownA0Spec> UnknownA0s { get; set; }
 
         [JsonPropertyName("unknownA8")]
-        public UnknownA8Spec[] UnknownA8s { get; set; }
+        public List<UnknownA8Spec> UnknownA8s { get; set; }
 
         [JsonPropertyName("citizen_first_names")]
-        public CitizenFirstNameSpec[] CitizenFirstNames { get; set; }
+        public List<CitizenFirstNameSpec> CitizenFirstNames { get; set; }
         
         [JsonPropertyName("citizen_last_names")]
-        public CitizenLastNameSpec[] CitizenLastNames { get; set; }
+        public List<CitizenLastNameSpec> CitizenLastNames { get; set; }
 
         [JsonPropertyName("unknownC8")]
-        public UnknownC8Spec[] UnknownC8s { get; set; }
+        public List<UnknownC8Spec> UnknownC8s { get; set; }
 
         [JsonPropertyName("unknownD0")]
-        public UnknownD0Spec[] UnknownD0s { get; set; }
+        public List<UnknownD0Spec> UnknownD0s { get; set; }
 
         [JsonPropertyName("unknownD8")]
-        public UnknownD8Spec[] UnknownD8s { get; set; }
+        public List<UnknownD8Spec> UnknownD8s { get; set; }
 
         public static ItemSpecFile Load(ReadOnlySpan<byte> span)
         {

@@ -21,6 +21,7 @@
  */
 
 using System;
+using System.Collections.Generic;
 using System.Text.Json.Serialization;
 using Gibbed.Buffers;
 using Gibbed.Memory;
@@ -49,7 +50,7 @@ namespace Gibbed.Panopticon.FileFormats.ItemSpecs
         public uint Unknown04 { get; set; }
 
         [JsonPropertyName("lots")]
-        public DropItemLotSpec[] Lots { get; set; }
+        public List<DropItemLotSpec> Lots { get; set; }
 
         void ISpec.Load(ReadOnlySpan<byte> span, ref int index, GameVersion version, Endian endian)
         {

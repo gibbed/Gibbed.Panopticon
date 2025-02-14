@@ -21,6 +21,7 @@
  */
 
 using System;
+using System.Collections.Generic;
 using System.Text.Json.Serialization;
 using Gibbed.Buffers;
 using Gibbed.Memory;
@@ -47,7 +48,7 @@ namespace Gibbed.Panopticon.FileFormats.ItemSpecs
         public uint Unknown00 { get; set; }
 
         [JsonPropertyName("unknown04")]
-        public Unknown98EntrySpec[] Unknown04 { get; set; }
+        public List<Unknown98EntrySpec> Unknown04 { get; set; }
 
         void ISpec.Load(ReadOnlySpan<byte> span, ref int index, GameVersion version, Endian endian)
         {

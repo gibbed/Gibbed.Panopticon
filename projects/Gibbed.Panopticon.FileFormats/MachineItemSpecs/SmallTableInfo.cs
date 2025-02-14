@@ -55,43 +55,43 @@ namespace Gibbed.Panopticon.FileFormats.MachineItemSpecs
             this.Header.Write(writer, labeler, endian);
         }
 
-        public T[] LoadTable(ReadOnlySpan<byte> span, GameVersion version, Endian endian)
+        public List<T> LoadTable(ReadOnlySpan<byte> span, GameVersion version, Endian endian)
         {
             var count = this.Header.Count;
-            var table = new T[count];
+            List<T> list = new(count);
             int index = this.Header.Offset;
             for (int i = 0; i < count; i++)
             {
                 T instance;
                 ISpec spec = instance = new();
                 spec.Load(span, ref index, version, endian);
-                table[i] = instance;
+                list.Add(instance);
             }
             for (int i = 0; i < count; i++)
             {
-                ISpec spec = table[i];
+                ISpec spec = list[i];
                 spec.PostLoad(span, version, endian);
             }
-            return table;
+            return list;
         }
 
-        public void SaveTable(IList<T> table, IArrayBufferWriter<byte> writer, ILabeler labeler, GameVersion version, Endian endian)
+        public void SaveTable(IList<T> list, IArrayBufferWriter<byte> writer, ILabeler labeler, GameVersion version, Endian endian)
         {
-            if (table.Count > ushort.MaxValue)
+            if (list.Count > ushort.MaxValue)
             {
-                throw new ArgumentOutOfRangeException(nameof(table), "table has too many entries");
+                throw new ArgumentOutOfRangeException(nameof(list), "table has too many entries");
             }
-            var count = (ushort)table.Count;
+            var count = (ushort)list.Count;
             this.Header.Set(count, writer.WrittenCount);
             for (int i = 0; i < count; i++)
             {
                 T instance;
-                ISpec spec = instance = table[i];
+                ISpec spec = instance = list[i];
                 spec.Save(writer, labeler, version, endian);
             }
             for (int i = 0; i < count; i++)
             {
-                ISpec spec = table[i];
+                ISpec spec = list[i];
                 spec.PostSave(writer, labeler, version, endian);
             }
         }
