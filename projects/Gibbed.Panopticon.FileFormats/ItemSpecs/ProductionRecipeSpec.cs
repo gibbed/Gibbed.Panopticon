@@ -36,7 +36,30 @@ namespace Gibbed.Panopticon.FileFormats.ItemSpecs
         internal const int Size = 48;
         internal const int PaddingSize = 10;
 
+        public const int ResultCount = 8;
+
         private int _ProductIdOffset;
+        private readonly ProductionRecipeResult[] _Results;
+
+        public ProductionRecipeSpec()
+        {
+            this._Results = new ProductionRecipeResult[ResultCount];
+        }
+
+        [JsonConstructor]
+        private ProductionRecipeSpec(ProductionRecipeResult[] results)
+            : this()
+        {
+            if (results == null)
+            {
+                throw new ArgumentNullException(nameof(results));
+            }
+            if (results.Length != ResultCount)
+            {
+                throw new ArgumentOutOfRangeException(nameof(results));
+            }
+            Array.Copy(results, this._Results, ResultCount);
+        }
 
         [JsonPropertyName("product_id")]
         public string ProductId { get; set; }
@@ -44,53 +67,8 @@ namespace Gibbed.Panopticon.FileFormats.ItemSpecs
         [JsonPropertyName("unknown04")]
         public ushort Unknown04 { get; set; }
 
-        [JsonPropertyName("unknown06")]
-        public ushort Unknown06 { get; set; }
-
-        [JsonPropertyName("unknown08")]
-        public ushort Unknown08 { get; set; }
-
-        [JsonPropertyName("unknown0A")]
-        public ushort Unknown0A { get; set; }
-
-        [JsonPropertyName("unknown0C")]
-        public ushort Unknown0C { get; set; }
-
-        [JsonPropertyName("unknown0E")]
-        public ushort Unknown0E { get; set; }
-
-        [JsonPropertyName("unknown10")]
-        public ushort Unknown10 { get; set; }
-
-        [JsonPropertyName("unknown12")]
-        public ushort Unknown12 { get; set; }
-
-        [JsonPropertyName("unknown14")]
-        public ushort Unknown14 { get; set; }
-
-        [JsonPropertyName("unknown16")]
-        public ushort Unknown16 { get; set; }
-
-        [JsonPropertyName("unknown18")]
-        public ushort Unknown18 { get; set; }
-
-        [JsonPropertyName("unknown1A")]
-        public ushort Unknown1A { get; set; }
-
-        [JsonPropertyName("unknown1C")]
-        public ushort Unknown1C { get; set; }
-
-        [JsonPropertyName("unknown1E")]
-        public ushort Unknown1E { get; set; }
-
-        [JsonPropertyName("unknown20")]
-        public ushort Unknown20 { get; set; }
-
-        [JsonPropertyName("unknown22")]
-        public ushort Unknown22 { get; set; }
-
-        [JsonPropertyName("unknown24")]
-        public ushort Unknown24 { get; set; }
+        [JsonPropertyName("results")]
+        public ProductionRecipeResult[] Results => this._Results;
 
         void ISpec.Load(ReadOnlySpan<byte> span, ref int index, GameVersion version, Endian endian)
         {
@@ -101,22 +79,16 @@ namespace Gibbed.Panopticon.FileFormats.ItemSpecs
 
             this._ProductIdOffset = span.ReadValueS32(ref index, endian);
             this.Unknown04 = span.ReadValueU16(ref index, endian);
-            this.Unknown06 = span.ReadValueU16(ref index, endian);
-            this.Unknown08 = span.ReadValueU16(ref index, endian);
-            this.Unknown0A = span.ReadValueU16(ref index, endian);
-            this.Unknown0C = span.ReadValueU16(ref index, endian);
-            this.Unknown0E = span.ReadValueU16(ref index, endian);
-            this.Unknown10 = span.ReadValueU16(ref index, endian);
-            this.Unknown12 = span.ReadValueU16(ref index, endian);
-            this.Unknown14 = span.ReadValueU16(ref index, endian);
-            this.Unknown16 = span.ReadValueU16(ref index, endian);
-            this.Unknown18 = span.ReadValueU16(ref index, endian);
-            this.Unknown1A = span.ReadValueU16(ref index, endian);
-            this.Unknown1C = span.ReadValueU16(ref index, endian);
-            this.Unknown1E = span.ReadValueU16(ref index, endian);
-            this.Unknown20 = span.ReadValueU16(ref index, endian);
-            this.Unknown22 = span.ReadValueU16(ref index, endian);
-            this.Unknown24 = span.ReadValueU16(ref index, endian);
+            var weightIndex = index;
+            var quantityIndex = weightIndex + 2 * ResultCount;
+            for (int i = 0; i < ResultCount; i++)
+            {
+                var result = this._Results[i];
+                result.Weight = span.ReadValueU16(ref weightIndex, endian);
+                result.Quantity = span.ReadValueU16(ref quantityIndex, endian);
+                this._Results[i] = result;
+            }
+            index = quantityIndex;
             span.SkipPadding(ref index, PaddingSize);
         }
 
@@ -129,32 +101,19 @@ namespace Gibbed.Panopticon.FileFormats.ItemSpecs
         {
             writer.WriteStringRef(this.ProductId, labeler);
             writer.WriteValueU16(this.Unknown04, endian);
-            writer.WriteValueU16(this.Unknown06, endian);
-            writer.WriteValueU16(this.Unknown08, endian);
-            writer.WriteValueU16(this.Unknown0A, endian);
-            writer.WriteValueU16(this.Unknown0C, endian);
-            writer.WriteValueU16(this.Unknown0E, endian);
-            writer.WriteValueU16(this.Unknown10, endian);
-            writer.WriteValueU16(this.Unknown12, endian);
-            writer.WriteValueU16(this.Unknown14, endian);
-            writer.WriteValueU16(this.Unknown16, endian);
-            writer.WriteValueU16(this.Unknown18, endian);
-            writer.WriteValueU16(this.Unknown1A, endian);
-            writer.WriteValueU16(this.Unknown1C, endian);
-            writer.WriteValueU16(this.Unknown1E, endian);
-            writer.WriteValueU16(this.Unknown20, endian);
-            writer.WriteValueU16(this.Unknown22, endian);
-            writer.WriteValueU16(this.Unknown24, endian);
+            for (int i = 0; i < ResultCount; i++)
+            {
+                writer.WriteValueU16(this._Results[i].Weight, endian);
+            }
+            for (int i = 0; i < ResultCount; i++)
+            {
+                writer.WriteValueU16(this._Results[i].Quantity, endian);
+            }
             writer.SkipPadding(PaddingSize);
         }
 
         void ISpec.PostSave(IArrayBufferWriter<byte> writer, ILabeler labeler, GameVersion version, Endian endian)
         {
-        }
-
-        public override string ToString()
-        {
-            return $"product id={this.ProductId}, u04={this.Unknown04}, u06={this.Unknown06}, u08={this.Unknown08}, u0A={this.Unknown0A}, u0C={this.Unknown0C}, u0E={this.Unknown0E}, u10={this.Unknown10}, u12={this.Unknown12}, u14={this.Unknown14}, u16={this.Unknown16}, u18={this.Unknown18}, u1A={this.Unknown1A}, u1C={this.Unknown1C}, u1E={this.Unknown1E}, u20={this.Unknown20}, u22={this.Unknown22}, u24={this.Unknown24}";
         }
     }
 }
