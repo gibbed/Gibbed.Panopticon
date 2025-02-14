@@ -17,17 +17,17 @@ Tools for modding **Freedom Wars Remastered**.
 
 ## Assets
 
-### Language Messages
+### Language Messages (`.lmsg`)
 
-* [`ExportMessages`](projects/Gibbed.Panopticon.ExportMessages): Exporter for language message files (`.lmsg`).
-* [`ImportMessages`](projects/Gibbed.Panopticon.ImportMessages): Importer for language message files (`.lmsg`).
+* [`ExportMessages`](projects/Gibbed.Panopticon.ExportMessages): Exporter for language message files to `.toml`.
+* [`ImportMessages`](projects/Gibbed.Panopticon.ImportMessages): Importer for language message files from `.toml`.
 
-## Spec
+### Spec
 
 * [`ExportSpec`](projects/Gibbed.Panopticon.ExportSpec): Exporter for spec files to `.json`.
 * [`ImportSpec`](projects/Gibbed.Panopticon.ImportSpec): Importer for spec files from `.json`.
 
-### Supported Specs
+#### Supported Specs
 
 | Type         | Extension | Path                                                    |
 | ------------ | --------- | ------------------------------------------------------- |
